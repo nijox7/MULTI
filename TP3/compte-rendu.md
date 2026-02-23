@@ -7,37 +7,43 @@
 seg_data_base + 576
 Première instruction main -> seg_data_base + 576  = (0x01000000)16 + (576)10
 Première instruction loop -> seg_data_base + 4 = (0x01000004)16 + (576)10
-<!-- à revoir TODO-->
+
+L'adresse de la première instruction de la fonction main est 0x00400000.
 
 ### C2
-A: seg_data_base
-B: seg_data_base + 20*2*4+48
-C: seg_data_base + (20*2*4+48)*2
-<!--a verifier TODO -->
+Chaque tableau fait 20*4 = 80 octets
+On a .space 48 entre chaque tableau.
+Et comme chaque représente 1 octet, on augment donc l'adresse de 128 à chaque fois 
+
+A:  0x 01 00 00 00
+(seg_data_base)
+
+B:  0x 01 00 00 80
+(seg_data_base + 0x 00 00 00 80)
+
+C:  0x 01 00 01 00 
+(seg_data_base + 0x 00 00 01 00)
 
 ### C3
-Pour ne pas gaspiller de cycle, comme lors d'un bne sur l'architecture Mips32 on a un cycle de nop après chaque branchement, on le remplace par une instruction utile.
-<!-- A préciser, être sur TODO-->
+Comme sur l'architecture Mips le branchement nécessite 1 cycle de nop, on le remplace par une instruction utile.
 
 ### C4
-<!-- A FAIRE TODO-->
 Calculer le nombre de cycle (compter les dépendance etc..)
-=> 7 cycles?
+Les dépendances sont suffisamment espacées pour éviter les cycles de gel.
+On a donc 7 cycles pour 1 itération sans prendre en compte les MISS des deux caches.
 
 
 ## D - Fonctionnement du cache instruction
 
 ### D1
-
-BYTE: 4 bits car 16 octets à choisir
-SET: 3 bits car 8 lignes à choisir
-TAG: 25 bits car 1 seul way possible?
-<!-- à revoir TODO -->
+BYTE: 4 bits car on 16 octets possibles
+SET: 3 bits car on 8 lignes différentes
+TAG: 25 bits (le reste)
 
 0x00400000 correspond donc à:
 TAG=0x8000
 SET=0x0
-BYTE=0x0 
+BYTE=0x0
 
 
 ### D2
@@ -46,12 +52,15 @@ lw   $10,    0($8)         # $10 <= A[i]
 et
 add  $12,    $10,     $11  # $12 <= A[i]+B[i]
 
+!["Tableau ICache"](img/1iticache.png)
+
 ### D3
 Le cache reste dans le même état et ne fait pas de miss.
-<!-- pas sur --TODO-->
+Le taux de MISS pour l'exécution complète de la boucle est donc très proche de 0%.
 
 ### D4
-Le MISS_SELECT est indispensable pour les caches qui ne sont pas à correspondance directe. (N_Way > 1)
+Le MISS_SELECT est indispensable pour les caches qui ne sont pas à correspondance directe car il permet de choisir la case où sera stockée la ligne.
+Si on a une correspondance directe, il n'y a pas besoin de déterminer la case puisqu'elle est unique. (N_Way > 1)
 
 ### D5
 !["Automate ICACHE"](img/automate_icache.png)
@@ -69,8 +78,6 @@ G = VALID.ERROR
 F = VALID.!ERROR
 N = *
 
-
-
 ### D6
 Activation de RESETN provoque le passage à l'état IDLE.
 L'autre effet doit être d'effacer complètement le cache d'instructions.
@@ -83,13 +90,13 @@ Le miss a lieu sur:
 - la   $8,     A             # $8 <= &A[0]
 - lw   $10,    0($8)         # $10 <= A[i]
 - lw   $11,    128($8)       # $11 <= B[i]
+!["DCACHE après 1 itération"](img/1itdcache.png)
 
 ### E2
-20 itérations
-2*1/4 Miss pour 1 itération
-2*5 = 10 Miss 
-!["ICACHE après 20 itérations"](img/icache_it.png)
-<!-- VOIR LE TAG -->
+Le taux de MISS est donc de 2 miss toutes les 4 itérations.
+Comme on a 7 instructions par cycle, on a donc 28 instructions toutes les 4 itérations.
+Donc un taux de MISS de 4/28 = 14,29%
+!["DCACHE après 20 itérations"](img/20itdcache.png)
 
 ### E3
 A = DREQ.DUNC

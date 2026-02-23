@@ -14,11 +14,11 @@
 
 A : .word  1,  2,  3,  4,  5,  6,  7,  8,  9,  10
     .word  11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-    .space 48
+    .space 48 # remplit 48 octets aléatoirement (avec la valeur déjà présente pblmt)
 
 B : .word  101, 102, 103, 104, 105, 106, 107, 108, 109, 110
     .word  111, 112, 113, 114, 115, 116, 117, 118, 119, 120
-    .space 48
+    .space 48 # remplit 48 octets aléatoirement (avec la valeur déjà présente pblmt)
 
 C : .word  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
     .word  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
