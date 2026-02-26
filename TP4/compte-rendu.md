@@ -107,14 +107,14 @@ Lorsque le tampon d'écritures reçoit une requête alors qu'il est plein, le pr
 Lorsque le processeur fait une requête de lecture qui fait MISS et que le tampon d'écritures est non-vide, le processeur vérifie que la donnée ne se trouve pas dans le tampon pour assurer la cohérence dans le cas où celle-ci serait en cours d'écriture.
 
 ### G2
-<!-- TO DO -->
 
-Profondeur  CPI     Coût    Fréquence
-1 mot
-2 mots  
-4 mots  
-8 mots
+Profondeur  CPI     Coût    Taux       Temps
+1 mot       4,87    0,46    15,36%     224908
+2 mots      4,87    0.027   15,36%     224802
+4 mots      4,87    0       15,36%     224802
+8 mots      4,87    0       15,36%     224802
 
-Le coût des écritures correspondent au nombre de cycle que le processeur attend en moyenne lors d'une écriture.
+Le coût des écritures correspond au nombre de cycle que le processeur attend en moyenne lors d'une écriture.
 Le coût des écritures est faible car le tampon d'écritures permet d'éviter les cycles de gel du porcesseur.
+Ici, comme on augmente la taille du buffer, on a donc plus de place et la situation dans laquelle le buffer est plein et que le processeur doit attendre qu'une place se libère n'arrive plus.
 Il suffit qu'il y ait au moins 1 place dans le tampon pour éviter d'attendre le temps nécessaire à l'écriture de la donnée.
