@@ -8,315 +8,302 @@ Disassembly of section .text:
    0:	27bdffe0 	addiu	sp,sp,-32
    4:	afbf001c 	sw	ra,28(sp)
    8:	afbe0018 	sw	s8,24(sp)
-   c:	03a0f025 	move	s8,sp
+   c:	03a0f021 	move	s8,sp
   10:	27c20014 	addiu	v0,s8,20
-  14:	00402825 	move	a1,v0
-  18:	24040004 	li	a0,4
+  14:	24040004 	li	a0,4
+  18:	00402821 	move	a1,v0
   1c:	0c000000 	jal	0 <_int_demux>
   20:	00000000 	nop
-  24:	14400012 	bnez	v0,70 <_int_demux+0x70>
+  24:	1440000f 	bnez	v0,64 <_int_demux+0x64>
   28:	00000000 	nop
   2c:	8fc20014 	lw	v0,20(s8)
   30:	28420020 	slti	v0,v0,32
-  34:	1040000d 	beqz	v0,6c <_int_demux+0x6c>
+  34:	1040000b 	beqz	v0,64 <_int_demux+0x64>
   38:	00000000 	nop
-  3c:	8fc30014 	lw	v1,20(s8)
-  40:	3c020000 	lui	v0,0x0
-  44:	00031880 	sll	v1,v1,0x2
-  48:	24420000 	addiu	v0,v0,0
-  4c:	00621021 	addu	v0,v1,v0
+  3c:	8fc20014 	lw	v0,20(s8)
+  40:	3c030000 	lui	v1,0x0
+  44:	00022080 	sll	a0,v0,0x2
+  48:	24620000 	addiu	v0,v1,0
+  4c:	00821021 	addu	v0,a0,v0
   50:	8c420000 	lw	v0,0(v0)
   54:	afc20010 	sw	v0,16(s8)
   58:	8fc20010 	lw	v0,16(s8)
   5c:	0040f809 	jalr	v0
   60:	00000000 	nop
-  64:	10000002 	b	70 <_int_demux+0x70>
-  68:	00000000 	nop
-  6c:	00000000 	nop
-  70:	03c0e825 	move	sp,s8
-  74:	8fbf001c 	lw	ra,28(sp)
-  78:	8fbe0018 	lw	s8,24(sp)
-  7c:	27bd0020 	addiu	sp,sp,32
-  80:	03e00008 	jr	ra
-  84:	00000000 	nop
+  64:	03c0e821 	move	sp,s8
+  68:	8fbf001c 	lw	ra,28(sp)
+  6c:	8fbe0018 	lw	s8,24(sp)
+  70:	27bd0020 	addiu	sp,sp,32
+  74:	03e00008 	jr	ra
+  78:	00000000 	nop
 
-00000088 <_isr_default>:
-  88:	27bdffe8 	addiu	sp,sp,-24
-  8c:	afbf0014 	sw	ra,20(sp)
-  90:	afbe0010 	sw	s8,16(sp)
-  94:	03a0f025 	move	s8,sp
-  98:	3c020000 	lui	v0,0x0
-  9c:	24440000 	addiu	a0,v0,0
-  a0:	0c000000 	jal	0 <_int_demux>
-  a4:	00000000 	nop
-  a8:	00000000 	nop
-  ac:	03c0e825 	move	sp,s8
-  b0:	8fbf0014 	lw	ra,20(sp)
-  b4:	8fbe0010 	lw	s8,16(sp)
-  b8:	27bd0018 	addiu	sp,sp,24
-  bc:	03e00008 	jr	ra
-  c0:	00000000 	nop
+0000007c <_isr_default>:
+  7c:	27bdffe8 	addiu	sp,sp,-24
+  80:	afbf0014 	sw	ra,20(sp)
+  84:	afbe0010 	sw	s8,16(sp)
+  88:	03a0f021 	move	s8,sp
+  8c:	3c020000 	lui	v0,0x0
+  90:	24440000 	addiu	a0,v0,0
+  94:	0c000000 	jal	0 <_int_demux>
+  98:	00000000 	nop
+  9c:	03c0e821 	move	sp,s8
+  a0:	8fbf0014 	lw	ra,20(sp)
+  a4:	8fbe0010 	lw	s8,16(sp)
+  a8:	27bd0018 	addiu	sp,sp,24
+  ac:	03e00008 	jr	ra
+  b0:	00000000 	nop
 
-000000c4 <_isr_dma>:
-  c4:	27bdffe0 	addiu	sp,sp,-32
-  c8:	afbf001c 	sw	ra,28(sp)
-  cc:	afbe0018 	sw	s8,24(sp)
-  d0:	03a0f025 	move	s8,sp
-  d4:	0c000000 	jal	0 <_int_demux>
-  d8:	00000000 	nop
-  dc:	afc20010 	sw	v0,16(s8)
-  e0:	8fc20010 	lw	v0,16(s8)
-  e4:	00021940 	sll	v1,v0,0x5
-  e8:	3c020000 	lui	v0,0x0
-  ec:	24420000 	addiu	v0,v0,0
-  f0:	00621021 	addu	v0,v1,v0
-  f4:	afc20014 	sw	v0,20(s8)
-  f8:	8fc20014 	lw	v0,20(s8)
-  fc:	8c430008 	lw	v1,8(v0)
- 100:	3c020000 	lui	v0,0x0
- 104:	8fc40010 	lw	a0,16(s8)
- 108:	00042080 	sll	a0,a0,0x2
- 10c:	24420000 	addiu	v0,v0,0
- 110:	00821021 	addu	v0,a0,v0
- 114:	ac430000 	sw	v1,0(v0)
- 118:	3c020000 	lui	v0,0x0
- 11c:	24430000 	addiu	v1,v0,0
- 120:	8fc20010 	lw	v0,16(s8)
- 124:	00621021 	addu	v0,v1,v0
- 128:	a0400000 	sb	zero,0(v0)
- 12c:	8fc20014 	lw	v0,20(s8)
- 130:	2442000c 	addiu	v0,v0,12
- 134:	ac400000 	sw	zero,0(v0)
- 138:	00000000 	nop
- 13c:	03c0e825 	move	sp,s8
- 140:	8fbf001c 	lw	ra,28(sp)
- 144:	8fbe0018 	lw	s8,24(sp)
- 148:	27bd0020 	addiu	sp,sp,32
- 14c:	03e00008 	jr	ra
- 150:	00000000 	nop
+000000b4 <_isr_dma>:
+  b4:	27bdffe0 	addiu	sp,sp,-32
+  b8:	afbf001c 	sw	ra,28(sp)
+  bc:	afbe0018 	sw	s8,24(sp)
+  c0:	03a0f021 	move	s8,sp
+  c4:	0c000000 	jal	0 <_int_demux>
+  c8:	00000000 	nop
+  cc:	afc20010 	sw	v0,16(s8)
+  d0:	3c020000 	lui	v0,0x0
+  d4:	24430000 	addiu	v1,v0,0
+  d8:	8fc20010 	lw	v0,16(s8)
+  dc:	00021140 	sll	v0,v0,0x5
+  e0:	00621021 	addu	v0,v1,v0
+  e4:	afc20014 	sw	v0,20(s8)
+  e8:	8fc30010 	lw	v1,16(s8)
+  ec:	8fc20014 	lw	v0,20(s8)
+  f0:	24420008 	addiu	v0,v0,8
+  f4:	8c440000 	lw	a0,0(v0)
+  f8:	3c020000 	lui	v0,0x0
+  fc:	00031880 	sll	v1,v1,0x2
+ 100:	24420000 	addiu	v0,v0,0
+ 104:	00621021 	addu	v0,v1,v0
+ 108:	ac440000 	sw	a0,0(v0)
+ 10c:	8fc30010 	lw	v1,16(s8)
+ 110:	3c020000 	lui	v0,0x0
+ 114:	24420000 	addiu	v0,v0,0
+ 118:	00621021 	addu	v0,v1,v0
+ 11c:	a0400000 	sb	zero,0(v0)
+ 120:	8fc20014 	lw	v0,20(s8)
+ 124:	2442000c 	addiu	v0,v0,12
+ 128:	ac400000 	sw	zero,0(v0)
+ 12c:	03c0e821 	move	sp,s8
+ 130:	8fbf001c 	lw	ra,28(sp)
+ 134:	8fbe0018 	lw	s8,24(sp)
+ 138:	27bd0020 	addiu	sp,sp,32
+ 13c:	03e00008 	jr	ra
+ 140:	00000000 	nop
 
-00000154 <_isr_ioc>:
- 154:	27bdfff0 	addiu	sp,sp,-16
- 158:	afbe000c 	sw	s8,12(sp)
- 15c:	03a0f025 	move	s8,sp
- 160:	3c020000 	lui	v0,0x0
- 164:	24420000 	addiu	v0,v0,0
- 168:	afc20000 	sw	v0,0(s8)
- 16c:	8fc20000 	lw	v0,0(s8)
- 170:	24420010 	addiu	v0,v0,16
- 174:	8c420000 	lw	v0,0(v0)
- 178:	304300ff 	andi	v1,v0,0xff
- 17c:	3c020000 	lui	v0,0x0
- 180:	a0430000 	sb	v1,0(v0)
- 184:	3c020000 	lui	v0,0x0
- 188:	24030001 	li	v1,1
- 18c:	a0430000 	sb	v1,0(v0)
+00000144 <_isr_ioc>:
+ 144:	27bdfff0 	addiu	sp,sp,-16
+ 148:	afbe000c 	sw	s8,12(sp)
+ 14c:	03a0f021 	move	s8,sp
+ 150:	3c020000 	lui	v0,0x0
+ 154:	24420000 	addiu	v0,v0,0
+ 158:	afc20000 	sw	v0,0(s8)
+ 15c:	8fc20000 	lw	v0,0(s8)
+ 160:	24420010 	addiu	v0,v0,16
+ 164:	8c420000 	lw	v0,0(v0)
+ 168:	304300ff 	andi	v1,v0,0xff
+ 16c:	3c020000 	lui	v0,0x0
+ 170:	a0430000 	sb	v1,0(v0)
+ 174:	3c030000 	lui	v1,0x0
+ 178:	24020001 	li	v0,1
+ 17c:	a0620000 	sb	v0,0(v1)
+ 180:	03c0e821 	move	sp,s8
+ 184:	8fbe000c 	lw	s8,12(sp)
+ 188:	27bd0010 	addiu	sp,sp,16
+ 18c:	03e00008 	jr	ra
  190:	00000000 	nop
- 194:	03c0e825 	move	sp,s8
- 198:	8fbe000c 	lw	s8,12(sp)
- 19c:	27bd0010 	addiu	sp,sp,16
- 1a0:	03e00008 	jr	ra
- 1a4:	00000000 	nop
 
-000001a8 <_isr_timer>:
- 1a8:	27bdffd8 	addiu	sp,sp,-40
- 1ac:	afbf0024 	sw	ra,36(sp)
- 1b0:	afbe0020 	sw	s8,32(sp)
- 1b4:	03a0f025 	move	s8,sp
- 1b8:	0c000000 	jal	0 <_int_demux>
- 1bc:	00000000 	nop
- 1c0:	afc20010 	sw	v0,16(s8)
- 1c4:	8fc20010 	lw	v0,16(s8)
- 1c8:	00021900 	sll	v1,v0,0x4
- 1cc:	3c020000 	lui	v0,0x0
- 1d0:	24420000 	addiu	v0,v0,0
- 1d4:	00621021 	addu	v0,v1,v0
- 1d8:	afc20014 	sw	v0,20(s8)
- 1dc:	8fc20014 	lw	v0,20(s8)
- 1e0:	2442000c 	addiu	v0,v0,12
- 1e4:	ac400000 	sw	zero,0(v0)
- 1e8:	3c020000 	lui	v0,0x0
- 1ec:	24440018 	addiu	a0,v0,24
+00000194 <_isr_timer>:
+ 194:	27bdffd8 	addiu	sp,sp,-40
+ 198:	afbf0024 	sw	ra,36(sp)
+ 19c:	afbe0020 	sw	s8,32(sp)
+ 1a0:	03a0f021 	move	s8,sp
+ 1a4:	0c000000 	jal	0 <_int_demux>
+ 1a8:	00000000 	nop
+ 1ac:	afc20018 	sw	v0,24(s8)
+ 1b0:	3c020000 	lui	v0,0x0
+ 1b4:	24430000 	addiu	v1,v0,0
+ 1b8:	8fc20018 	lw	v0,24(s8)
+ 1bc:	00021100 	sll	v0,v0,0x4
+ 1c0:	00621021 	addu	v0,v1,v0
+ 1c4:	afc2001c 	sw	v0,28(s8)
+ 1c8:	8fc2001c 	lw	v0,28(s8)
+ 1cc:	2442000c 	addiu	v0,v0,12
+ 1d0:	ac400000 	sw	zero,0(v0)
+ 1d4:	3c020000 	lui	v0,0x0
+ 1d8:	24440018 	addiu	a0,v0,24
+ 1dc:	0c000000 	jal	0 <_int_demux>
+ 1e0:	00000000 	nop
+ 1e4:	3c020000 	lui	v0,0x0
+ 1e8:	24420044 	addiu	v0,v0,68
+ 1ec:	afc20014 	sw	v0,20(s8)
  1f0:	0c000000 	jal	0 <_int_demux>
  1f4:	00000000 	nop
- 1f8:	3c020000 	lui	v0,0x0
- 1fc:	24420044 	addiu	v0,v0,68
- 200:	afc20018 	sw	v0,24(s8)
- 204:	0c000000 	jal	0 <_int_demux>
- 208:	00000000 	nop
- 20c:	afc2001c 	sw	v0,28(s8)
- 210:	8fc2001c 	lw	v0,28(s8)
- 214:	8fc50018 	lw	a1,24(s8)
- 218:	00402025 	move	a0,v0
- 21c:	0c000000 	jal	0 <_int_demux>
- 220:	00000000 	nop
- 224:	8fc40018 	lw	a0,24(s8)
- 228:	0c000000 	jal	0 <_int_demux>
- 22c:	00000000 	nop
- 230:	3c020000 	lui	v0,0x0
- 234:	24440050 	addiu	a0,v0,80
- 238:	0c000000 	jal	0 <_int_demux>
- 23c:	00000000 	nop
+ 1f8:	afc20010 	sw	v0,16(s8)
+ 1fc:	8fc20010 	lw	v0,16(s8)
+ 200:	00402021 	move	a0,v0
+ 204:	8fc50014 	lw	a1,20(s8)
+ 208:	0c000000 	jal	0 <_int_demux>
+ 20c:	00000000 	nop
+ 210:	8fc40014 	lw	a0,20(s8)
+ 214:	0c000000 	jal	0 <_int_demux>
+ 218:	00000000 	nop
+ 21c:	3c020000 	lui	v0,0x0
+ 220:	24440050 	addiu	a0,v0,80
+ 224:	0c000000 	jal	0 <_int_demux>
+ 228:	00000000 	nop
+ 22c:	03c0e821 	move	sp,s8
+ 230:	8fbf0024 	lw	ra,36(sp)
+ 234:	8fbe0020 	lw	s8,32(sp)
+ 238:	27bd0028 	addiu	sp,sp,40
+ 23c:	03e00008 	jr	ra
  240:	00000000 	nop
- 244:	03c0e825 	move	sp,s8
- 248:	8fbf0024 	lw	ra,36(sp)
- 24c:	8fbe0020 	lw	s8,32(sp)
- 250:	27bd0028 	addiu	sp,sp,40
- 254:	03e00008 	jr	ra
- 258:	00000000 	nop
 
-0000025c <_isr_tty_get_indexed>:
- 25c:	27bdffd8 	addiu	sp,sp,-40
- 260:	afbf0024 	sw	ra,36(sp)
- 264:	afbe0020 	sw	s8,32(sp)
- 268:	03a0f025 	move	s8,sp
- 26c:	afc40028 	sw	a0,40(s8)
- 270:	0c000000 	jal	0 <_int_demux>
- 274:	00000000 	nop
- 278:	afc20010 	sw	v0,16(s8)
- 27c:	8fc30010 	lw	v1,16(s8)
- 280:	8fc20028 	lw	v0,40(s8)
- 284:	00621021 	addu	v0,v1,v0
- 288:	00021900 	sll	v1,v0,0x4
- 28c:	3c020000 	lui	v0,0x0
- 290:	24420000 	addiu	v0,v0,0
+00000244 <_isr_tty_get_indexed>:
+ 244:	27bdffd8 	addiu	sp,sp,-40
+ 248:	afbf0024 	sw	ra,36(sp)
+ 24c:	afbe0020 	sw	s8,32(sp)
+ 250:	03a0f021 	move	s8,sp
+ 254:	afc40028 	sw	a0,40(s8)
+ 258:	0c000000 	jal	0 <_int_demux>
+ 25c:	00000000 	nop
+ 260:	afc20014 	sw	v0,20(s8)
+ 264:	3c020000 	lui	v0,0x0
+ 268:	24440000 	addiu	a0,v0,0
+ 26c:	8fc30014 	lw	v1,20(s8)
+ 270:	8fc20028 	lw	v0,40(s8)
+ 274:	00621021 	addu	v0,v1,v0
+ 278:	00021100 	sll	v0,v0,0x4
+ 27c:	00821021 	addu	v0,a0,v0
+ 280:	afc20018 	sw	v0,24(s8)
+ 284:	0c000000 	jal	0 <_int_demux>
+ 288:	00000000 	nop
+ 28c:	00401821 	move	v1,v0
+ 290:	8fc20028 	lw	v0,40(s8)
  294:	00621021 	addu	v0,v1,v0
- 298:	afc20014 	sw	v0,20(s8)
- 29c:	0c000000 	jal	0 <_int_demux>
- 2a0:	00000000 	nop
- 2a4:	00401825 	move	v1,v0
- 2a8:	8fc20028 	lw	v0,40(s8)
- 2ac:	00431021 	addu	v0,v0,v1
- 2b0:	afc20018 	sw	v0,24(s8)
- 2b4:	8fc20014 	lw	v0,20(s8)
- 2b8:	24420008 	addiu	v0,v0,8
- 2bc:	8c420000 	lw	v0,0(v0)
- 2c0:	304300ff 	andi	v1,v0,0xff
+ 298:	afc20010 	sw	v0,16(s8)
+ 29c:	8fc40010 	lw	a0,16(s8)
+ 2a0:	8fc20018 	lw	v0,24(s8)
+ 2a4:	24420008 	addiu	v0,v0,8
+ 2a8:	8c420000 	lw	v0,0(v0)
+ 2ac:	304300ff 	andi	v1,v0,0xff
+ 2b0:	3c020000 	lui	v0,0x0
+ 2b4:	24420000 	addiu	v0,v0,0
+ 2b8:	00821021 	addu	v0,a0,v0
+ 2bc:	a0430000 	sb	v1,0(v0)
+ 2c0:	8fc30010 	lw	v1,16(s8)
  2c4:	3c020000 	lui	v0,0x0
- 2c8:	24440000 	addiu	a0,v0,0
- 2cc:	8fc20018 	lw	v0,24(s8)
- 2d0:	00821021 	addu	v0,a0,v0
- 2d4:	a0430000 	sb	v1,0(v0)
- 2d8:	3c020000 	lui	v0,0x0
- 2dc:	24430000 	addiu	v1,v0,0
- 2e0:	8fc20018 	lw	v0,24(s8)
- 2e4:	00621021 	addu	v0,v1,v0
- 2e8:	24030001 	li	v1,1
- 2ec:	a0430000 	sb	v1,0(v0)
- 2f0:	00000000 	nop
- 2f4:	03c0e825 	move	sp,s8
- 2f8:	8fbf0024 	lw	ra,36(sp)
- 2fc:	8fbe0020 	lw	s8,32(sp)
- 300:	27bd0028 	addiu	sp,sp,40
- 304:	03e00008 	jr	ra
+ 2c8:	24420000 	addiu	v0,v0,0
+ 2cc:	00621821 	addu	v1,v1,v0
+ 2d0:	24020001 	li	v0,1
+ 2d4:	a0620000 	sb	v0,0(v1)
+ 2d8:	03c0e821 	move	sp,s8
+ 2dc:	8fbf0024 	lw	ra,36(sp)
+ 2e0:	8fbe0020 	lw	s8,32(sp)
+ 2e4:	27bd0028 	addiu	sp,sp,40
+ 2e8:	03e00008 	jr	ra
+ 2ec:	00000000 	nop
+
+000002f0 <_isr_tty_get>:
+ 2f0:	27bdffe8 	addiu	sp,sp,-24
+ 2f4:	afbf0014 	sw	ra,20(sp)
+ 2f8:	afbe0010 	sw	s8,16(sp)
+ 2fc:	03a0f021 	move	s8,sp
+ 300:	00002021 	move	a0,zero
+ 304:	0c000000 	jal	0 <_int_demux>
  308:	00000000 	nop
+ 30c:	03c0e821 	move	sp,s8
+ 310:	8fbf0014 	lw	ra,20(sp)
+ 314:	8fbe0010 	lw	s8,16(sp)
+ 318:	27bd0018 	addiu	sp,sp,24
+ 31c:	03e00008 	jr	ra
+ 320:	00000000 	nop
 
-0000030c <_isr_tty_get>:
- 30c:	27bdffe8 	addiu	sp,sp,-24
- 310:	afbf0014 	sw	ra,20(sp)
- 314:	afbe0010 	sw	s8,16(sp)
- 318:	03a0f025 	move	s8,sp
- 31c:	00002025 	move	a0,zero
- 320:	0c000000 	jal	0 <_int_demux>
- 324:	00000000 	nop
- 328:	00000000 	nop
- 32c:	03c0e825 	move	sp,s8
- 330:	8fbf0014 	lw	ra,20(sp)
- 334:	8fbe0010 	lw	s8,16(sp)
- 338:	27bd0018 	addiu	sp,sp,24
- 33c:	03e00008 	jr	ra
- 340:	00000000 	nop
+00000324 <_isr_tty_get_task0>:
+ 324:	27bdffe8 	addiu	sp,sp,-24
+ 328:	afbf0014 	sw	ra,20(sp)
+ 32c:	afbe0010 	sw	s8,16(sp)
+ 330:	03a0f021 	move	s8,sp
+ 334:	00002021 	move	a0,zero
+ 338:	0c000000 	jal	0 <_int_demux>
+ 33c:	00000000 	nop
+ 340:	03c0e821 	move	sp,s8
+ 344:	8fbf0014 	lw	ra,20(sp)
+ 348:	8fbe0010 	lw	s8,16(sp)
+ 34c:	27bd0018 	addiu	sp,sp,24
+ 350:	03e00008 	jr	ra
+ 354:	00000000 	nop
 
-00000344 <_isr_tty_get_task0>:
- 344:	27bdffe8 	addiu	sp,sp,-24
- 348:	afbf0014 	sw	ra,20(sp)
- 34c:	afbe0010 	sw	s8,16(sp)
- 350:	03a0f025 	move	s8,sp
- 354:	00002025 	move	a0,zero
- 358:	0c000000 	jal	0 <_int_demux>
- 35c:	00000000 	nop
- 360:	00000000 	nop
- 364:	03c0e825 	move	sp,s8
- 368:	8fbf0014 	lw	ra,20(sp)
- 36c:	8fbe0010 	lw	s8,16(sp)
- 370:	27bd0018 	addiu	sp,sp,24
- 374:	03e00008 	jr	ra
- 378:	00000000 	nop
+00000358 <_isr_tty_get_task1>:
+ 358:	27bdffe8 	addiu	sp,sp,-24
+ 35c:	afbf0014 	sw	ra,20(sp)
+ 360:	afbe0010 	sw	s8,16(sp)
+ 364:	03a0f021 	move	s8,sp
+ 368:	24040001 	li	a0,1
+ 36c:	0c000000 	jal	0 <_int_demux>
+ 370:	00000000 	nop
+ 374:	03c0e821 	move	sp,s8
+ 378:	8fbf0014 	lw	ra,20(sp)
+ 37c:	8fbe0010 	lw	s8,16(sp)
+ 380:	27bd0018 	addiu	sp,sp,24
+ 384:	03e00008 	jr	ra
+ 388:	00000000 	nop
 
-0000037c <_isr_tty_get_task1>:
- 37c:	27bdffe8 	addiu	sp,sp,-24
- 380:	afbf0014 	sw	ra,20(sp)
- 384:	afbe0010 	sw	s8,16(sp)
- 388:	03a0f025 	move	s8,sp
- 38c:	24040001 	li	a0,1
- 390:	0c000000 	jal	0 <_int_demux>
- 394:	00000000 	nop
- 398:	00000000 	nop
- 39c:	03c0e825 	move	sp,s8
- 3a0:	8fbf0014 	lw	ra,20(sp)
- 3a4:	8fbe0010 	lw	s8,16(sp)
- 3a8:	27bd0018 	addiu	sp,sp,24
- 3ac:	03e00008 	jr	ra
- 3b0:	00000000 	nop
+0000038c <_isr_tty_get_task2>:
+ 38c:	27bdffe8 	addiu	sp,sp,-24
+ 390:	afbf0014 	sw	ra,20(sp)
+ 394:	afbe0010 	sw	s8,16(sp)
+ 398:	03a0f021 	move	s8,sp
+ 39c:	24040002 	li	a0,2
+ 3a0:	0c000000 	jal	0 <_int_demux>
+ 3a4:	00000000 	nop
+ 3a8:	03c0e821 	move	sp,s8
+ 3ac:	8fbf0014 	lw	ra,20(sp)
+ 3b0:	8fbe0010 	lw	s8,16(sp)
+ 3b4:	27bd0018 	addiu	sp,sp,24
+ 3b8:	03e00008 	jr	ra
+ 3bc:	00000000 	nop
 
-000003b4 <_isr_tty_get_task2>:
- 3b4:	27bdffe8 	addiu	sp,sp,-24
- 3b8:	afbf0014 	sw	ra,20(sp)
- 3bc:	afbe0010 	sw	s8,16(sp)
- 3c0:	03a0f025 	move	s8,sp
- 3c4:	24040002 	li	a0,2
- 3c8:	0c000000 	jal	0 <_int_demux>
- 3cc:	00000000 	nop
- 3d0:	00000000 	nop
- 3d4:	03c0e825 	move	sp,s8
- 3d8:	8fbf0014 	lw	ra,20(sp)
- 3dc:	8fbe0010 	lw	s8,16(sp)
- 3e0:	27bd0018 	addiu	sp,sp,24
- 3e4:	03e00008 	jr	ra
- 3e8:	00000000 	nop
+000003c0 <_isr_tty_get_task3>:
+ 3c0:	27bdffe8 	addiu	sp,sp,-24
+ 3c4:	afbf0014 	sw	ra,20(sp)
+ 3c8:	afbe0010 	sw	s8,16(sp)
+ 3cc:	03a0f021 	move	s8,sp
+ 3d0:	24040003 	li	a0,3
+ 3d4:	0c000000 	jal	0 <_int_demux>
+ 3d8:	00000000 	nop
+ 3dc:	03c0e821 	move	sp,s8
+ 3e0:	8fbf0014 	lw	ra,20(sp)
+ 3e4:	8fbe0010 	lw	s8,16(sp)
+ 3e8:	27bd0018 	addiu	sp,sp,24
+ 3ec:	03e00008 	jr	ra
+ 3f0:	00000000 	nop
 
-000003ec <_isr_tty_get_task3>:
- 3ec:	27bdffe8 	addiu	sp,sp,-24
- 3f0:	afbf0014 	sw	ra,20(sp)
- 3f4:	afbe0010 	sw	s8,16(sp)
- 3f8:	03a0f025 	move	s8,sp
- 3fc:	24040003 	li	a0,3
- 400:	0c000000 	jal	0 <_int_demux>
- 404:	00000000 	nop
+000003f4 <_isr_switch>:
+ 3f4:	27bdffe0 	addiu	sp,sp,-32
+ 3f8:	afbf001c 	sw	ra,28(sp)
+ 3fc:	afbe0018 	sw	s8,24(sp)
+ 400:	03a0f021 	move	s8,sp
+ 404:	0c000000 	jal	0 <_int_demux>
  408:	00000000 	nop
- 40c:	03c0e825 	move	sp,s8
- 410:	8fbf0014 	lw	ra,20(sp)
- 414:	8fbe0010 	lw	s8,16(sp)
- 418:	27bd0018 	addiu	sp,sp,24
- 41c:	03e00008 	jr	ra
- 420:	00000000 	nop
-
-00000424 <_isr_switch>:
- 424:	27bdffe0 	addiu	sp,sp,-32
- 428:	afbf001c 	sw	ra,28(sp)
- 42c:	afbe0018 	sw	s8,24(sp)
- 430:	03a0f025 	move	s8,sp
+ 40c:	afc20010 	sw	v0,16(s8)
+ 410:	3c020000 	lui	v0,0x0
+ 414:	24430000 	addiu	v1,v0,0
+ 418:	8fc20010 	lw	v0,16(s8)
+ 41c:	00021100 	sll	v0,v0,0x4
+ 420:	00621021 	addu	v0,v1,v0
+ 424:	afc20014 	sw	v0,20(s8)
+ 428:	8fc20014 	lw	v0,20(s8)
+ 42c:	2442000c 	addiu	v0,v0,12
+ 430:	ac400000 	sw	zero,0(v0)
  434:	0c000000 	jal	0 <_int_demux>
  438:	00000000 	nop
- 43c:	afc20010 	sw	v0,16(s8)
- 440:	8fc20010 	lw	v0,16(s8)
- 444:	00021900 	sll	v1,v0,0x4
- 448:	3c020000 	lui	v0,0x0
- 44c:	24420000 	addiu	v0,v0,0
- 450:	00621021 	addu	v0,v1,v0
- 454:	afc20014 	sw	v0,20(s8)
- 458:	8fc20014 	lw	v0,20(s8)
- 45c:	2442000c 	addiu	v0,v0,12
- 460:	ac400000 	sw	zero,0(v0)
- 464:	0c000000 	jal	0 <_int_demux>
- 468:	00000000 	nop
- 46c:	00000000 	nop
- 470:	03c0e825 	move	sp,s8
- 474:	8fbf001c 	lw	ra,28(sp)
- 478:	8fbe0018 	lw	s8,24(sp)
- 47c:	27bd0020 	addiu	sp,sp,32
- 480:	03e00008 	jr	ra
- 484:	00000000 	nop
+ 43c:	03c0e821 	move	sp,s8
+ 440:	8fbf001c 	lw	ra,28(sp)
+ 444:	8fbe0018 	lw	s8,24(sp)
+ 448:	27bd0020 	addiu	sp,sp,32
+ 44c:	03e00008 	jr	ra
+ 450:	00000000 	nop
 
 Disassembly of section .data:
 
@@ -328,15 +315,6 @@ Disassembly of section .reginfo:
 00000000 <.reginfo>:
    0:	e000003c 	sc	zero,60(zero)
 	...
-
-Disassembly of section .MIPS.abiflags:
-
-00000000 <.MIPS.abiflags>:
-   0:	01200000 	0x1200000
-   4:	01000101 	0x1000101
-	...
-  10:	00000001 	movf	zero,zero,$fcc0
-  14:	00000000 	nop
 
 Disassembly of section .pdr:
 
@@ -432,7 +410,7 @@ Disassembly of section .rodata:
    0:	21210a0a 	addi	at,t1,2570
    4:	65442021 	0x65442021
    8:	6c756166 	0x6c756166
-   c:	53492074 	beql	k0,t1,81e0 <_isr_switch+0x7dbc>
+   c:	53492074 	beql	k0,t1,81e0 <_isr_switch+0x7dec>
   10:	21212052 	addi	at,t1,8274
   14:	00000a21 	0xa21
   18:	21210a0a 	addi	at,t1,2570
@@ -441,7 +419,7 @@ Disassembly of section .rodata:
   24:	20747075 	addi	s4,v1,28789
   28:	656d6974 	0x656d6974
   2c:	65722072 	0x65722072
-  30:	76696563 	jalx	9a5958c <_isr_switch+0x9a59168>
+  30:	76696563 	jalx	9a5958c <_isr_switch+0x9a59198>
   34:	61206465 	0x61206465
   38:	79632074 	0x79632074
   3c:	3a656c63 	xori	a1,s3,0x6c63
@@ -449,8 +427,7 @@ Disassembly of section .rodata:
   44:	20202020 	addi	zero,at,8224
   48:	20202020 	addi	zero,at,8224
   4c:	00002020 	add	a0,zero,zero
-  50:	Address 0x0000000000000050 is out of bounds.
-
+  50:	00000a0a 	0xa0a
 
 Disassembly of section .comment:
 
@@ -458,7 +435,7 @@ Disassembly of section .comment:
    0:	43434700 	c0	0x1434700
    4:	4728203a 	c1	0x128203a
    8:	2029554e 	addi	t1,at,21838
-   c:	2e322e38 	sltiu	s2,s1,11832
+   c:	2e332e34 	sltiu	s3,s1,11828
   10:	Address 0x0000000000000010 is out of bounds.
 
 
@@ -466,6 +443,6 @@ Disassembly of section .gnu.attributes:
 
 00000000 <.gnu.attributes>:
    0:	00000f41 	0xf41
-   4:	756e6700 	jalx	5b99c00 <_isr_switch+0x5b997dc>
+   4:	756e6700 	jalx	5b99c00 <_isr_switch+0x5b9980c>
    8:	00070100 	sll	zero,a3,0x4
    c:	01040000 	0x1040000

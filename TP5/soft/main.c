@@ -30,15 +30,17 @@ __attribute__ ((constructor)) void main() {
     // échiquier de 64+64=128
     // 1 case = 32*32 pixels
     // => 2^(17) = 131 072 pixels
-    for (int line = 0; line < NLINE; line += 1) { 
+    int line = 0;
+    for (; line < NLINE; line += 1) {
     // parcourt chaque ligne de pixel
         if (line%nprocs == n){
-            for (int pixel = 0; pixel < NPIXEL; pixel += 1) { 
+            int pixel = 0;
+            for (; pixel < NPIXEL; pixel += 1) { 
             // parcourt chaque pixel de la ligne
                 buf[pixel] = build(pixel, line, 5);
                 // détermine la couleur du pixel
             }
-            if (fb_sync_write(256*line, &buf, 256)) {
+            if (fb_sync_write(NPIXEL*line, &buf, NPIXEL)) {
                 tty_printf(" !!! wrong transfer to frame buffer for line %d\n", line);
             }
             else {

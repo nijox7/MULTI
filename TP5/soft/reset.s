@@ -19,8 +19,15 @@ reset:
     .set noreorder
 
     # initializes stack pointer
-    la    $29, seg_stack_base
-    addiu $29, $29,    0x4000 # stack size = 16 Kbytes
+    mfc0 $27, $15, 1        # récupère le numéro du processeur
+    la $29, seg_stack_base  # récupère l'adresse de la base de la pile
+
+    li $26, 0x10000         # r26 <= 64 000
+    addiu $27, $27, 1       # procid <= procid + 1, on fait ça pour que le processeur 0 ait une adresse à +64kBytes et aps à 0
+    mult $27, $26           # res <= r27 * r26 = procid * 64 000
+    mflo $27                # r27 <= res, move from low (LSB de la multiplication)
+    
+    addu $29, $29, $27      # stack_base <= stack_base + (procid+1) * 64000
 
     # initializes SR register
     li    $26, 0x0000FF13    
