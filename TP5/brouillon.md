@@ -1,5 +1,54 @@
 # Compte-rendu TP5
 
+## A - Objectifs
+
+Compilation
+
+Terminal1: 
+export SOCLIB_FB=HEADLESS
+soclib-cc -p tp5.desc -t systemcass -o simul.x
+
+Terminal2:
+ssh -XY reicha
+cd Document/S2/MULTI/TP5
+make soft/
+soclib-cc -p tp5.desc -t systemcass -o simul.x
+./simul.x
+
+Notes:
+
+Bande passante: nombre maximum d'octets transférés par unité de temps.
+Un nombre de processeur plus grand force le partage de la bande passante.
+Le temps pour accéder au bus augmente.
+
+Nouveaux périphériques:
+FBF:"Frame Buffer Controller" (graphic display) -> affiche des images sur un écran
+Plusieurs processeurs
+TTY maintenant "character display"
+
+1 processeur possède 1 TTY
+Segment mémoire de tous les TTY, size = NPROCS*16 octets
+car 4 registres de 32 bits, donc 4*4 octets = 16 octets. (32 bits = 4 octet)
+
+Écran: 256*256 pixels, 256 niveau de gris
+    Premier Tampon: (64Koctet, luminance)
+        adresse de base: premier pixel de la première ligne
+        adresse de base + 256: premier pixel de la deuxième ligne
+        +1 = +1 octet
+    Deuxième Tampon: (64Koctet, chrominance)
+        (pas utilisés pour images en niveaux de gris)
+
+    -> automate parcours les tampons à une fréquence de 25im/s!!
+        (1/25 = 0,040 s =) toutes les 40ms !
+
+Petits caches: 16 lignes de 8 mots, 1-Way associative (coresspondance directe)
+(16lignes * 8mots * 4octets = 512 octets)
+
+Main.c ->
+    Échiquier 64 cases noires + 64 cases blanches = 128 cases
+    1 case = 32*32 pixels = 1024 pixels
+    => 2^(17) = 131 072 pixels
+
 ## B - Architecture matérielle
 
 ### B1
@@ -128,6 +177,16 @@ Lors de la simulation, 1 coeur n'a pas fonctionné.
 C'était du au code reset.s qui n'était pas fait correctement.
 Voici les mesures prises des simulations avec différents nombres de processeurs:
 
+1 processeur:  cycles=5277093  speedup=1
+
+2 processeurs: cycles=2954133  speedup=1.786342
+
+4 processeurs: cycles=1600839  speedup=3.296454
+
+6 processeurs: cycles=1517593  speedup=3.477278
+
+8 processeurs: cycles=1541276  speedup=3.423847
+
 |       |1proc   | 2procs | 4procs | 6procs | 8procs |
 |:------|:-----: |:-----: |:-----: |:-----: |:------:|
 |cycles |5277093 |2954133 |1600839 |1517593 |541276  |
@@ -212,5 +271,3 @@ En faisant ce calcul on obtient:
 $$TauxOccupationBus_{1 processeur} \approx 0,422 = 42,2\%$$
 Si on avait donc 2 processeur, on aurait $84,4\%$. Avec 4 processeurs on atteint $128,8\%$, on dépasse $100\%$ de transactions par cycle, il y a donc une saturation du bus.\
 Le bus commence à saturer donc à partir de 4 processeurs, ce qui est cohérrent avec nos résultats précédents.
-
-On remarque cependant que le temps d'accès au bus augmente à partir de 2 processeurs dans la simulation, ce qui signifie que même si en théorie le bus n'est pas saturé, il y a quand même un partage qui est effectué entre les 2 processeurs.
