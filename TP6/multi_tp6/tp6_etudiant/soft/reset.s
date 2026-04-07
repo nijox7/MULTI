@@ -37,8 +37,8 @@ proc0:
     li    $27,    0x10000        # stack size = 64K
     addu  $29,    $29,    $27    # $29 <= seg_stack_base + 64K
 
-    # initializes Status Register for PROC[0]
-    li    $26,    0x0000FF13     # user mode, exception level = 1, irq mask = FF, irq enable
+    # initializes SR register for PROC[0]
+    li    $26,    0x0000FF13    
     mtc0  $26,    $12            # SR <= 0x0000FF13
 
     # jump to main in user mode: main[0]
@@ -52,19 +52,8 @@ proc1:
     # initializes the ICU[1] MASK register
     # initializes TIMER[1] PERIOD and RUNNING registers
     # initializes stack pointer for PROC[1]
-    la  $29,    seg_stack_base
-    li  $27,    0x20000         # offset -> stack_size proc0 + stack size proc1 = 128K
-    addu $29, $29, $27          # $29 <= seg_stack_base + 2*64K
-
-    # initializes Status Register for PROC[1]
-    li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
-    mtc0  $26,  $12             # SR <= 0x0000FF13
-
+    # initializes SR register for PROC[1]
     # jump to main in user mode: main[1]
-    la    $26,    seg_data_base
-    lw    $26,    4($26)         # $26 <= main[1], chaque adresse est sur 4 octet donc on fait 4($26)
-    mtc0  $26,    $14            # write it in EPC register
-    eret
 
     .set reorder
 

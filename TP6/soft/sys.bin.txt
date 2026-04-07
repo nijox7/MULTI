@@ -31,7 +31,7 @@ bfc00048:	341aff13 	li	k0,0xff13
 bfc0004c:	409a6000 	mtc0	k0,c0_status
 bfc00050:	3c1a0100 	lui	k0,0x100
 bfc00054:	275a0000 	addiu	k0,k0,0
-bfc00058:	8f5a0001 	lw	k0,1(k0)
+bfc00058:	8f5a0004 	lw	k0,4(k0)
 bfc0005c:	409a7000 	mtc0	k0,c0_epc
 bfc00060:	42000018 	eret
 
@@ -3004,6 +3004,14 @@ Disassembly of section .pdr:
  738:	0000001e 	0x1e
  73c:	0000001f 	0x1f
 
+Disassembly of section .gnu.attributes:
+
+00000000 <.gnu.attributes>:
+   0:	00000f41 	0xf41
+   4:	756e6700 	jalx	5b99c00 <seg_stack_base+0x3b99c00>
+   8:	00070100 	sll	zero,a3,0x4
+   c:	01040000 	0x1040000
+
 Disassembly of section .comment:
 
 00000000 <.comment>:
@@ -3012,11 +3020,3 @@ Disassembly of section .comment:
    8:	38202955 	xori	zero,at,0x2955
    c:	302e322e 	andi	t6,at,0x322e
 	...
-
-Disassembly of section .gnu.attributes:
-
-00000000 <.gnu.attributes>:
-   0:	00000f41 	0xf41
-   4:	756e6700 	jalx	5b99c00 <seg_stack_base+0x3b99c00>
-   8:	00070100 	sll	zero,a3,0x4
-   c:	01040000 	0x1040000
