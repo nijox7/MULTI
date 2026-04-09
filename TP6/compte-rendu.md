@@ -49,7 +49,7 @@ Le composant PibusMultiTimer est configurable en logiciel, il est donc une cible
 
 L'argument 'ntimer' de ce composant permet de définir le nombre de timers programmables du composant. Cela va également définir le nombre de signaux d'interruptions en sortie.
 
-Les registres adressables de ce composant sont:\
+Les registres adressables de ce composant sont:
 
 - *r_value*:\
 Adresse: SEG_TIM_BASE + n_timer*0x10.\
@@ -76,8 +76,8 @@ L'argument *nproc* définit le nombre de processeur connectés à l'ICU, et donc
 
 Un logiciel peut aiguiller les interruptions de l'ICU à l'aide d'un mask pour chacun des processeurs. Ces masks permettent aux processeurs de choisir les interruptions qui les intéressent.
 
-Les registres adressables de ce composant sont:\
-- *r_int*:\ 
+Les registres adressables de ce composant sont:
+- *r_int*:\
 Adresse: SEG_ICU_BASE + 0x0 + n_proc*0x20\
 Permet de lire le status des lignes d'interruptions.
 
@@ -104,15 +104,62 @@ L'adresse associée au composant PibusIcu doit être alignée sur 32*8 octets ca
 
 ### C4
 Pour relier les 4 lignes d'interruptions, les ports IRQ_IN du contrôleur ICU sont connecté à des signaux internes qui sont eux-mêmes connecté aux composants PibusMultiTimer et PibusMultiTty.
+Par exemple, les signaux internes reliant le timer à l'icu sont les deux premières entrées du tableau *signal_irq_tim* et pour ceux du tty ils sont dans *signal_irq_tty_put* et *signal_irq_tty_get*.  
 
 
 ## D - Lancement des tâches
 
 ### D1
-<!-- TODO Détailler?? -->
+<!-- TODO Détailler?? (pas obligé, pas de question) -->
 
 ### D2
-L'adresse de main_prime() est 0x01000000.\
-L'adresse de main_pgcd() est 0x01000004.
+L'adresse de main_prime() est 0x004012e8.\
+L'adresse de main_pgcd() est 0x004013fc.
 
 ### D3
+On force GCC à construire la table de saut au début du segment data en le spécifiant dans le fichier *app.ld* qui va spécifier au linker la construction de cette table. C'est la ligne "*(.ctors)" qui permet de dire au linker que l'on veut mettre tous les constructeurs au début du segment seg_data.
+<!-- TODO, app.ld? -->
+
+### D4
+Le programme de calcul du PGCD attend une réponse de l'utilisateur, il attend donc une interruption.
+Pour cela il faut donc configurer l'ICU afin de gérer les interruptions multiprocesseur.
+<!-- TODO à détailler, pas clair? -->
+
+
+## E - Activation du Timer
+
+### E1
+Pour se brancher à une routine ISR, le processeur initialise un tableau contenant les pointeurs des ISR de chaque IRQ, c'est *_interrupt_vector*.
+
+Entre le branchement au point d'entrée d'adresse 0x80000180 et le branchement à la routine Timer:
+
+*_giet* récupère dans _cause_vector, l'élement indexé par le XCODE trouvé dans register_cause. Cela lui permet d'analyser si il doit gérer une erreur, une interruption ou autre chose et de sauter à la fonction correspondante.
+Dans notre cas on va à *_int_handler* qui gère les interruptions et va appeler la fonction *_int_demux*. Cela permet d'accéder au vecteur des ISR et de sauter à l'ISR correspondant à l'interruption.
+
+### E2
+La routine d'interruption *_isr_timer*, qui se trouve dans le fichier *irq_handler.c*, reset l'IRQ et affiche l'heure et la date de la réception de l'interruption.
+
+### E3
+
+tp6_top.cpp:\
+tim.pirq + nproc*4
+icu.pirqin + (2 + 2*i)*4
+
+pibus_multi_timer.h:\
+name
+id
+32bits
+32bits
+char*
+char
+
+irq_in = interrupt_vector?
+
+On accède au tableau _interrupt_vector en faisant *lw $27, _interrupt_vector*.\
+Puis on lit l'adresse de l'ISR *lw $29, _isr_timer*.\
+Enfin on détermine le bon décalage dans le tableau avec le calcul suivant:\
+$Timer_i => 2 + 2 \times i$\
+$i = 0 =>2 + 2 \times 0 = 2$\
+$i = 1 => 2 + 2 \times 1 = 4$\
+Puis on multiplie par 4 car c'est un vecteur d'adresses codées sur 4 octets.\
+Cela nous donne donc un décalage de $2\times4 = 8$ pour le processeur 0 et $4\times4 = 16$ pour le processeur 1.
