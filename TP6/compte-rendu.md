@@ -44,6 +44,17 @@ eret -> permet de sortir du mode kernel
 Pour le cache " 4 fois associatifs ayant une capacités de 4 Koctets et des lignes de cache de 32 octets (8 mots)"
 On prend 32 ensembles car 4 * 32 * 
 
+_tty_get_full -> int langage C
+              -> mis à 0 par consommateur
+              -> mis à 1 par producteur
+
+_isr_tty_get  -> valeur saisie au clavier
+
+- Algorithme consommateur (os/logiciel) -> 
+>char c = _tty_read_irq();\
+_tty_get_buf[i] = c;\
+_tty_get_full = 0;
+
 ### C1
 Le composant PibusMultiTimer est configurable en logiciel, il est donc une cible sur le bus pour permettre de le configurer en accèdant à son registre de mask.
 
@@ -99,8 +110,10 @@ Permet de lire le numéro de la ligne d'IRQ de priorité maximale.
 
 
 ### C3
-L'adresse associée au composant PibusIcu doit être alignée sur 32*8 octets car
-<!--TODO-->
+L'adresse associée au composant PibusIcu doit être alignée sur 32*8 octets.
+Ceci est du au fait que les MSB sont codés sur 3 bits donc 2^5 = 32 possibilités avec les LSB qui sont codés sur 2^3 = 8.
+On a donc une adresse de base qui est alignée sur 8, il suffit donc simplement de comparer les MSB (bits de poids fort) pour vérifier de quel composant il s'agit.
+Si on relâchait cette contrainte, on devrait alors comparer également les bits de poids faible (LSB), donc 3 bits, afin de déterminer à quel composant appartient une adresse.
 
 ### C4
 Pour relier les 4 lignes d'interruptions, les ports IRQ_IN du contrôleur ICU sont connecté à des signaux internes qui sont eux-mêmes connecté aux composants PibusMultiTimer et PibusMultiTty.
@@ -140,21 +153,6 @@ Dans notre cas on va à *_int_handler* qui gère les interruptions et va appeler
 La routine d'interruption *_isr_timer*, qui se trouve dans le fichier *irq_handler.c*, reset l'IRQ et affiche l'heure et la date de la réception de l'interruption.
 
 ### E3
-
-tp6_top.cpp:\
-tim.pirq + nproc*4
-icu.pirqin + (2 + 2*i)*4
-
-pibus_multi_timer.h:\
-name
-id
-32bits
-32bits
-char*
-char
-
-irq_in = interrupt_vector?
-
 On accède au tableau _interrupt_vector en faisant *lw $27, _interrupt_vector*.\
 Puis on lit l'adresse de l'ISR *lw $29, _isr_timer*.\
 Enfin on détermine le bon décalage dans le tableau avec le calcul suivant:\
@@ -163,3 +161,42 @@ $i = 0 =>2 + 2 \times 0 = 2$\
 $i = 1 => 2 + 2 \times 1 = 4$\
 Puis on multiplie par 4 car c'est un vecteur d'adresses codées sur 4 octets.\
 Cela nous donne donc un décalage de $2\times4 = 8$ pour le processeur 0 et $4\times4 = 16$ pour le processeur 1.
+
+### E4
+On récupère l'adresse de base du composant multi_timer, puis on incrémente de 16 pour le processeur 1 obtenir celle du timer 1 car chaque timer est sur 16 octets.
+
+### E5
+Pour obtenir l'adresse de ICU0 et ICU1:\
+ICU0 correspond à l'adresse de base de ICU.\
+ICU1 correspond à l'adresse de base de ICU + 32 car chaque ICU est sur 32 octets.\
+
+On incrémente ensuite chaque adresse de 8 pour obtenir l'adresse du registre correspondant au *ICU_SET*.
+
+### E6
+- Le processeur 0 écrit la première valeur dans le vecteur d'interruption au cycle 43.\
+Le premier accès mémoire correspond à la première occurence de "*sel_ram* = 1".
+>la $27, _interrupt_vector
+
+- Le registre *MASK[0]* est configuré au cycle 56.\
+On identifie la première occurence de "*sel_icu* = 1".
+>sw     $29,    8($27)
+
+- Le registre *TIMER[0]* est configuré au cycle 60.\
+On identifie la première occurence de "*sel_tim* = 1".
+>sw     $29,    8($27)        # period = 50000
+
+<!-- TODO VOIR ACQUITTEMENT??? -->
+
+### E7
+<!-- TODO  MAISON -->
+- Le processeur 0 reçoit la première interruption du TIMER[0] au cycle 50067.\
+On identifie la première occurence de "*tim_irq[0]* = 1".
+
+
+### E8
+<!-- TODO MAISON -->
+
+## F - Activation des interruptions TTY
+
+### F1
+L'ISR doit être asynchrone car sinon, cela ralentira probablement le système si l'on avait plusieurs interruptions à la suite. Cela provoquerait également l'interruption immédiate de la tâche actuelle, alors que ce n'est pas nécessaire.
