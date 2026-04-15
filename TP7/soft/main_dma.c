@@ -24,10 +24,11 @@ __attribute__ ((constructor)) void main() {
 
         tty_printf(" - build   OK at cycle %d\n", proctime());
 
-        if (fb_sync_write(0, BUF, NLINE * NPIXEL) != 0) {
+        if (fb_write(0, BUF, NLINE * NPIXEL) != 0) {
             tty_printf("\n!!! error in fb_syn_write syscall !!!\n"); 
             exit();
         }
+	fb_completed(); // wait until fb_write() finished
 
         tty_printf(" - display OK at cycle %d\n", proctime());
 
