@@ -1,202 +1,78 @@
-# Compte-rendu TP6
+# Compte-rendu TP7
 
-## C - Composants périphériques
+## Notes
 
-Pibusslcu -> 32 lignes d'interruptions IN
-          -> 1 ligne OUT (1 sortie / processeur)
+DMA -> coprocesseur donc pas d'accès mémoire pour communiquer entre DMA et Processeur?\
+    -> cible du processeur pour les commandes, mais pas pour le buffer qui enregistre l'image\
+    -> initiateur du FrameBuffer pour envoyer l'image sur le bus en rafales (plus rapide que le logiciel)
+    -> algorithme transformé en matériel (+++ rapide)
+    -> capacité de stockage
 
-IT_Vector -> index de l'interruption en priorité
-          -> peut masqué interruption avec mask 32 bits (1 mask / processeur)
+Processeur -> écrit dans registres du DMA les paramètres (source, dest, size)
 
-Timer     -> plusieurs timers
-          -> 1 ligne interruption / timer
-          -> 1 ISR pour tous les timers?
+coprocesseur = travaille en parallèle
 
-TTY       -> 1 ligne interruption / TTY
-          -> ISR: _ist_tty_get
+## B - Contrôleur DMA
 
-mécanisme de scrutation = mécanisme d'examen en continu de quelque chose
+### B1
+
+- <b>SOURCE</b>: Accès en écriture ignoré si l'automate n'est pas en IDLE.
+
+- <b>DEST</b>: Accès en écriture ignoré si l'automate n'est pas en IDLE.
+
+- <b>LENGTH/STATUS</b>: Un accès en écriture initie le transfert du DMA suivant les registres SOURCE et DEST.\
+Un accès en lecture donnera l'état actuel de l'automate du DMA.
+
+- <b>RESET</b>: Accès en écriture arrête le transfert actuel du DMA et force l'automate à l'état IDLE. Cela permet également de reconnaître une IRQ. <!-- TODO pas compris derniere phrase -->
+
+- <b>IRQ_DISABLED</b>: Si ce registre contient 1, les interruptions ne sont ignorées sur le DMA.
+
+L'adresse de base du composant doit être alignée sur une frontière de bloc de 32 octet car seuls les 5 bits de poids faibles sont décodés et permettent d'adresses donc plus facilement les registres du DMA. Comme il y a 5 registres de 4 octets, on a 20 octet, en arrondissant à la puissance de 2 supérieur on arrive donc à 32 octets.
+
+### B2
+L'argument burst permet de spécifier le nombre maximum de mots que l'on veut transférer en 1 transfert en rafale.
+
+### B3
+Pour contrôler le contrôler le coprocesseur DMA, il faut deux automates. L'un pour gérer les transferts en rafales et les accès au bus, l'autre pour gérer l'état des commandes du processeur. Ceci permet de séparer deux tâches spécifiques indépendantes. L'automate Target indiquera donc au processeur si le DMA est capable de traiter sa requête ou s'il est occupé par exemple.
+
+### B4
+La bascule *r_stop* a pour fonction de signaler à l'automate Master d'arrêter son transfert s'il n'est pas en train de faire un transfert en rafale. Cela permet donc de synchroniser l'automate Master avec l'automate Target lorsque ce dernier  
+
+La bascule *r_stop* permet de synchroniser les deux automates Target et Master.\
+Target peut dire à Master de ne pas faire de transfert, dans ce cas la bascule *r_stop* est mise à 1 par Target.\
+Cela permet également d'interrompre Master s'il est en train de faire un transfert. Mais un transfert en rafale ne peut être interrompu.\
+Sinon Target peut dire à Master de faire un transfert en mettant *r_stop* à 0.
+
+### B5
+
+<!-- TODO mettre automate -->
 
 
-PibusMultiTTY:
-- nb tty
-- automate, registre d'état, fonction de transition
-- mask 16 clavier
-- mask 16 affichage
-- keyboard character
-- ports Pibus + ports Irq
-- m_fsm_str -> tableau des noms des états de l'automate (idle, display, status, keyboard..)
-
-PibusMultiTimer:
-- nb timer
-- automate comme tty
-- Mêmes ports que tty
-- registres counter, running, period
-
-PibusIcu:
-- mask for 8 outputs
-- number of inputs/outputs IRQs = nirq/nproc
-- automate
-- Mêmes ports pibus
-
-eret -> permet de sortir du mode kernel
-
-Pour le cache " 4 fois associatifs ayant une capacités de 4 Koctets et des lignes de cache de 32 octets (8 mots)"
-On prend 32 ensembles car 4 * 32 * 
-
-_tty_get_full -> int langage C
-              -> mis à 0 par consommateur
-              -> mis à 1 par producteur
-
-_isr_tty_get  -> valeur saisie au clavier
-
-- Algorithme consommateur (os/logiciel) -> 
->char c = _tty_read_irq();\
-_tty_get_buf[i] = c;\
-_tty_get_full = 0;
+## C - Architecture matérielle
 
 ### C1
-Le composant PibusMultiTimer est configurable en logiciel, il est donc une cible sur le bus pour permettre de le configurer en accèdant à son registre de mask.
-
-L'argument 'ntimer' de ce composant permet de définir le nombre de timers programmables du composant. Cela va également définir le nombre de signaux d'interruptions en sortie.
-
-Les registres adressables de ce composant sont:
-
-- *r_value*:\
-Adresse: SEG_TIM_BASE + n_timer*0x10.\
-Permet de définir ou de lire la valeur du timer.
-
-- *r_running*:\
-Adresse: SEG_TIM_BASE + 0x4 + n_timer*0x10.\
-Permet d'activer (1) ou de désactiver (0) l'incrémentation du timer.
-
-- *r_period*: Adresse:\
-SEG_TIM_BASE + 0x8 + n_timer*0x10.\
-Permet de définir la période d'incrémentation du timer en npmbre de cycles.
-
-- *r_irq*:\
-Adresse: SEG_TIM_BASE + 0xC + n_timer*0x10.\
-Permet d'activer (1) ou désactiver (0) les interruptions.
+La longueur d'une rafale en mots de 32 bits est de 16.\
+L'avantage d'utiliser des grosses rafales est le nombre de cycles économisés par la réduction du nombre de requête au bus ainsi que les cycles servant à initier la transaction et la terminer.\
+La conséquence de l'augmentation de la longueur de la rafale sur le matériel est <!-- TODO je ne sais pas??? Peut-être l'arbitre de bus mais c'est logiciel?? TIMEOUT??-->
 
 ### C2
-Le composant PibusIcus est une cible sur le bus car il permet de programmer les interruptions. Ce sont donc les processeurs qui vont faire des transactions sur le bus pour le programmer.
+L'adresse de base du composant DMA est 0x93000000.
 
-L'argument *nirq* du contructeur permet de définir le nombre d'interruptions que l'on veut gérer en entrée de l'ICU.
+Le numéro de cible du DMA pour le BCU est 6: 
+>#define DMA_INDEX 6
 
-L'argument *nproc* définit le nombre de processeur connectés à l'ICU, et donc le nombre de sorties de l'ICU.
+Le numéro de maître du DMA pour le BCU est 1:
+>bcu.p_req[nprocs]    (signal_req_dma);\
+bcu.p_gnt[nprocs]    (signal_gnt_dma);
 
-Un logiciel peut aiguiller les interruptions de l'ICU à l'aide d'un mask pour chacun des processeurs. Ces masks permettent aux processeurs de choisir les interruptions qui les intéressent.
+Le port d'entrée du composant ICU connecté au DMA est le port 0:
+>IRQ_IN[0]    : DMA
 
-Les registres adressables de ce composant sont:
-- *r_int*:\
-Adresse: SEG_ICU_BASE + 0x0 + n_proc*0x20\
-Permet de lire le status des lignes d'interruptions.
+## D - Application logicielle
 
-- *r_mask*:\
-Adresse: SEG_ICU_BASE + 0x4 + n_proc*0x20\
-Permet de lire le mask des IRQ associé au processeur.
+### D1
+Le composant qui effectue le transfert de pixel est le processeur lui-même.
+L'appel car il utilise la fonction memcpy définit dans *common.h*.\
+La fonction est donc bloquante car c'est une boucle while exécutée par le processeur.
 
-- *icu_set*:\
-Adresse: SEG_ICU_BASE + 0x8 + n_proc*0x20\
-Permet d'écrire les bits du mask IRQ.
-
-- *icu_clear*:\
-Adresse: SEG_ICU_BASE + 0xC + n_proc*0x20\
-Permet de mettre à 0 les bits du mask IRQ.
-
-- *icu_highest*:\
-Adresse: SEG_ICU_BASE + 0x10 + n_proc*0x20\
-Permet de lire le numéro de la ligne d'IRQ de priorité maximale.
-
-
-### C3
-L'adresse associée au composant PibusIcu doit être alignée sur 32*8 octets.
-Ceci est du au fait que les MSB sont codés sur 3 bits donc 2^5 = 32 possibilités avec les LSB qui sont codés sur 2^3 = 8.
-On a donc une adresse de base qui est alignée sur 8, il suffit donc simplement de comparer les MSB (bits de poids fort) pour vérifier de quel composant il s'agit.
-Si on relâchait cette contrainte, on devrait alors comparer également les bits de poids faible (LSB), donc 3 bits, afin de déterminer à quel composant appartient une adresse.
-
-### C4
-Pour relier les 4 lignes d'interruptions, les ports IRQ_IN du contrôleur ICU sont connecté à des signaux internes qui sont eux-mêmes connecté aux composants PibusMultiTimer et PibusMultiTty.
-Par exemple, les signaux internes reliant le timer à l'icu sont les deux premières entrées du tableau *signal_irq_tim* et pour ceux du tty ils sont dans *signal_irq_tty_put* et *signal_irq_tty_get*.  
-
-
-## D - Lancement des tâches
-
-### D1
-<!-- TODO Détailler?? (pas obligé, pas de question) -->
-
-### D2
-L'adresse de main_prime() est 0x004012e8.\
-L'adresse de main_pgcd() est 0x004013fc.
-
-### D3
-On force GCC à construire la table de saut au début du segment data en le spécifiant dans le fichier *app.ld* qui va spécifier au linker la construction de cette table. C'est la ligne "*(.ctors)" qui permet de dire au linker que l'on veut mettre tous les constructeurs au début du segment seg_data.
-<!-- TODO, app.ld? -->
-
-### D4
-Le programme de calcul du PGCD attend une réponse de l'utilisateur, il attend donc une interruption.
-Pour cela il faut donc configurer l'ICU afin de gérer les interruptions multiprocesseur.
-<!-- TODO à détailler, pas clair? -->
-
-
-## E - Activation du Timer
-
-### E1
-Pour se brancher à une routine ISR, le processeur initialise un tableau contenant les pointeurs des ISR de chaque IRQ, c'est *_interrupt_vector*.
-
-Entre le branchement au point d'entrée d'adresse 0x80000180 et le branchement à la routine Timer:
-
-*_giet* récupère dans _cause_vector, l'élement indexé par le XCODE trouvé dans register_cause. Cela lui permet d'analyser si il doit gérer une erreur, une interruption ou autre chose et de sauter à la fonction correspondante.
-Dans notre cas on va à *_int_handler* qui gère les interruptions et va appeler la fonction *_int_demux*. Cela permet d'accéder au vecteur des ISR et de sauter à l'ISR correspondant à l'interruption.
-
-### E2
-La routine d'interruption *_isr_timer*, qui se trouve dans le fichier *irq_handler.c*, reset l'IRQ et affiche l'heure et la date de la réception de l'interruption.
-
-### E3
-On accède au tableau _interrupt_vector en faisant *lw $27, _interrupt_vector*.\
-Puis on lit l'adresse de l'ISR *lw $29, _isr_timer*.\
-Enfin on détermine le bon décalage dans le tableau avec le calcul suivant:\
-$Timer_i => 2 + 2 \times i$\
-$i = 0 =>2 + 2 \times 0 = 2$\
-$i = 1 => 2 + 2 \times 1 = 4$\
-Puis on multiplie par 4 car c'est un vecteur d'adresses codées sur 4 octets.\
-Cela nous donne donc un décalage de $2\times4 = 8$ pour le processeur 0 et $4\times4 = 16$ pour le processeur 1.
-
-### E4
-On récupère l'adresse de base du composant multi_timer, puis on incrémente de 16 pour le processeur 1 obtenir celle du timer 1 car chaque timer est sur 16 octets.
-
-### E5
-Pour obtenir l'adresse de ICU0 et ICU1:\
-ICU0 correspond à l'adresse de base de ICU.\
-ICU1 correspond à l'adresse de base de ICU + 32 car chaque ICU est sur 32 octets.\
-
-On incrémente ensuite chaque adresse de 8 pour obtenir l'adresse du registre correspondant au *ICU_SET*.
-
-### E6
-- Le processeur 0 écrit la première valeur dans le vecteur d'interruption au cycle 43.\
-Le premier accès mémoire correspond à la première occurence de "*sel_ram* = 1".
->la $27, _interrupt_vector
-
-- Le registre *MASK[0]* est configuré au cycle 56.\
-On identifie la première occurence de "*sel_icu* = 1".
->sw     $29,    8($27)
-
-- Le registre *TIMER[0]* est configuré au cycle 60.\
-On identifie la première occurence de "*sel_tim* = 1".
->sw     $29,    8($27)        # period = 50000
-
-<!-- TODO VOIR ACQUITTEMENT??? -->
-
-### E7
-<!-- TODO  MAISON -->
-- Le processeur 0 reçoit la première interruption du TIMER[0] au cycle 50067.\
-On identifie la première occurence de "*tim_irq[0]* = 1".
-
-
-### E8
-<!-- TODO MAISON -->
-
-## F - Activation des interruptions TTY
-
-### F1
-L'ISR doit être asynchrone car sinon, cela ralentira probablement le système si l'on avait plusieurs interruptions à la suite. Cela provoquerait également l'interruption immédiate de la tâche actuelle, alors que ce n'est pas nécessaire.
+### D2
