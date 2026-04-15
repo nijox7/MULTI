@@ -7,7 +7,7 @@ Disassembly of section seg_reset:
 bfc00000 <reset>:
 bfc00000:	401b7801 	mfc0	k1,$15,1
 bfc00004:	337b0001 	andi	k1,k1,0x1
-bfc00008:	17600018 	bnez	k1,bfc0006c <proc1>
+bfc00008:	1760001b 	bnez	k1,bfc00078 <proc1>
 
 bfc0000c <proc0>:
 bfc0000c:	3c1b8200 	lui	k1,0x8200
@@ -15,54 +15,60 @@ bfc00010:	277b031c 	addiu	k1,k1,796
 bfc00014:	3c1d8000 	lui	sp,0x8000
 bfc00018:	27bd1c1c 	addiu	sp,sp,7196
 bfc0001c:	af7d0008 	sw	sp,8(k1)
-bfc00020:	3c1b9f00 	lui	k1,0x9f00
-bfc00024:	241d0008 	li	sp,8
-bfc00028:	af7d0008 	sw	sp,8(k1)
-bfc0002c:	3c1b9100 	lui	k1,0x9100
-bfc00030:	341dc350 	li	sp,0xc350
+bfc00020:	3c1d8000 	lui	sp,0x8000
+bfc00024:	27bd1d80 	addiu	sp,sp,7552
+bfc00028:	af7d000c 	sw	sp,12(k1)
+bfc0002c:	3c1b9f00 	lui	k1,0x9f00
+bfc00030:	241d000c 	li	sp,12
 bfc00034:	af7d0008 	sw	sp,8(k1)
-bfc00038:	241d0003 	li	sp,3
-bfc0003c:	af7d0004 	sw	sp,4(k1)
-bfc00040:	3c1d0200 	lui	sp,0x200
-bfc00044:	27bd0000 	addiu	sp,sp,0
-bfc00048:	3c1b0001 	lui	k1,0x1
-bfc0004c:	03bbe821 	addu	sp,sp,k1
-bfc00050:	341aff13 	li	k0,0xff13
-bfc00054:	409a6000 	mtc0	k0,c0_status
-bfc00058:	3c1a0100 	lui	k0,0x100
-bfc0005c:	275a0000 	addiu	k0,k0,0
-bfc00060:	8f5a0000 	lw	k0,0(k0)
-bfc00064:	409a7000 	mtc0	k0,c0_epc
-bfc00068:	42000018 	eret
+bfc00038:	3c1b9100 	lui	k1,0x9100
+bfc0003c:	341dc350 	li	sp,0xc350
+bfc00040:	af7d0008 	sw	sp,8(k1)
+bfc00044:	241d0003 	li	sp,3
+bfc00048:	af7d0004 	sw	sp,4(k1)
+bfc0004c:	3c1d0200 	lui	sp,0x200
+bfc00050:	27bd0000 	addiu	sp,sp,0
+bfc00054:	3c1b0001 	lui	k1,0x1
+bfc00058:	03bbe821 	addu	sp,sp,k1
+bfc0005c:	341aff13 	li	k0,0xff13
+bfc00060:	409a6000 	mtc0	k0,c0_status
+bfc00064:	3c1a0100 	lui	k0,0x100
+bfc00068:	275a0000 	addiu	k0,k0,0
+bfc0006c:	8f5a0000 	lw	k0,0(k0)
+bfc00070:	409a7000 	mtc0	k0,c0_epc
+bfc00074:	42000018 	eret
 
-bfc0006c <proc1>:
-bfc0006c:	3c1b8200 	lui	k1,0x8200
-bfc00070:	277b031c 	addiu	k1,k1,796
-bfc00074:	3c1d8000 	lui	sp,0x8000
-bfc00078:	27bd1c1c 	addiu	sp,sp,7196
-bfc0007c:	af7d0010 	sw	sp,16(k1)
-bfc00080:	3c1b9f00 	lui	k1,0x9f00
-bfc00084:	237b0020 	addi	k1,k1,32
-bfc00088:	241d0008 	li	sp,8
-bfc0008c:	af7d0008 	sw	sp,8(k1)
-bfc00090:	3c1b9100 	lui	k1,0x9100
-bfc00094:	237b0010 	addi	k1,k1,16
-bfc00098:	3c1d0001 	lui	sp,0x1
-bfc0009c:	37bd86a0 	ori	sp,sp,0x86a0
-bfc000a0:	af7d0008 	sw	sp,8(k1)
-bfc000a4:	241d0003 	li	sp,3
-bfc000a8:	af7d0004 	sw	sp,4(k1)
-bfc000ac:	3c1d0200 	lui	sp,0x200
-bfc000b0:	27bd0000 	addiu	sp,sp,0
-bfc000b4:	3c1b0002 	lui	k1,0x2
-bfc000b8:	03bbe821 	addu	sp,sp,k1
-bfc000bc:	341aff13 	li	k0,0xff13
-bfc000c0:	409a6000 	mtc0	k0,c0_status
-bfc000c4:	3c1a0100 	lui	k0,0x100
-bfc000c8:	275a0000 	addiu	k0,k0,0
-bfc000cc:	8f5a0004 	lw	k0,4(k0)
-bfc000d0:	409a7000 	mtc0	k0,c0_epc
-bfc000d4:	42000018 	eret
+bfc00078 <proc1>:
+bfc00078:	3c1b8200 	lui	k1,0x8200
+bfc0007c:	277b031c 	addiu	k1,k1,796
+bfc00080:	3c1d8000 	lui	sp,0x8000
+bfc00084:	27bd1c1c 	addiu	sp,sp,7196
+bfc00088:	af7d0010 	sw	sp,16(k1)
+bfc0008c:	3c1d8000 	lui	sp,0x8000
+bfc00090:	27bd1d80 	addiu	sp,sp,7552
+bfc00094:	af7d0014 	sw	sp,20(k1)
+bfc00098:	3c1b9f00 	lui	k1,0x9f00
+bfc0009c:	237b0020 	addi	k1,k1,32
+bfc000a0:	241d0030 	li	sp,48
+bfc000a4:	af7d0008 	sw	sp,8(k1)
+bfc000a8:	3c1b9100 	lui	k1,0x9100
+bfc000ac:	237b0010 	addi	k1,k1,16
+bfc000b0:	3c1d0001 	lui	sp,0x1
+bfc000b4:	37bd86a0 	ori	sp,sp,0x86a0
+bfc000b8:	af7d0008 	sw	sp,8(k1)
+bfc000bc:	241d0000 	li	sp,0
+bfc000c0:	af7d0004 	sw	sp,4(k1)
+bfc000c4:	3c1d0200 	lui	sp,0x200
+bfc000c8:	27bd0000 	addiu	sp,sp,0
+bfc000cc:	3c1b0002 	lui	k1,0x2
+bfc000d0:	03bbe821 	addu	sp,sp,k1
+bfc000d4:	341aff13 	li	k0,0xff13
+bfc000d8:	409a6000 	mtc0	k0,c0_status
+bfc000dc:	3c1a0100 	lui	k0,0x100
+bfc000e0:	275a0000 	addiu	k0,k0,0
+bfc000e4:	8f5a0004 	lw	k0,4(k0)
+bfc000e8:	409a7000 	mtc0	k0,c0_epc
+bfc000ec:	42000018 	eret
 
 Disassembly of section seg_kcode:
 
