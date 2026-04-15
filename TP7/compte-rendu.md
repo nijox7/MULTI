@@ -70,9 +70,29 @@ Le port d'entrée du composant ICU connecté au DMA est le port 0:
 
 ## D - Application logicielle
 
-### D1
+### D1
 Le composant qui effectue le transfert de pixel est le processeur lui-même.
 L'appel car il utilise la fonction memcpy définit dans *common.h*.\
 La fonction est donc bloquante car c'est une boucle while exécutée par le processeur.
 
-### D2
+### D2
+Avec l'appel memcpy:
+
+- Temps de construction de l'image: 13 926 510 cycles
+
+- Temps d'affichage de l'image: 14 367 590  - 13 926 510 = 441 080 cycles
+
+### D3
+*fb_sync_write* fait appel à la fonction memcpy, qui s'éxecute sur le processeur, pour copier une zone mémoire utilisateur vers une destination donnée.
+
+*fb_write* configure les registre du composant DMA pour qu'il transfère la mémoire à la manière de memcpy mais avec des transactions en rafales et en parallèle du processeur.
+
+L'appel à fb_completed() permet de vérifier si le DMA est prêt à faire une nouvelle transaction, cela permet donc de ne pas effacer le buffer du DMA d'une transaction en cours.
+
+### D4
+Avec le DMA on obtient cette-fois ci:
+
+- Temps de construction de l'image: 12 345 732 cycles
+
+- Temps d'affichage de l'image: 12 389 014 - 12 345 732 = 43 282 cycles, soit 10 fois moins de temps d'affichage qu'avec memcpy!
+
