@@ -78,9 +78,9 @@ La fonction est donc bloquante car c'est une boucle while exécutée par le proc
 ### D2
 Avec l'appel memcpy:
 
-- Temps de construction de l'image: 13 926 510 cycles
+- Temps de construction de l'image: 2 432 848 cycles
 
-- Temps d'affichage de l'image: 14 367 590  - 13 926 510 = 441 080 cycles
+- Temps d'affichage de l'image: 2 870 879 - 2 432 848 = 438 031 cycles
 
 ### D3
 *fb_sync_write* fait appel à la fonction memcpy, qui s'éxecute sur le processeur, pour copier une zone mémoire utilisateur vers une destination donnée.
@@ -92,7 +92,52 @@ L'appel à fb_completed() permet de vérifier si le DMA est prêt à faire une n
 ### D4
 Avec le DMA on obtient cette-fois ci:
 
-- Temps de construction de l'image: 12 345 732 cycles
+- Temps de construction de l'image: 2 432 848 cycles
 
-- Temps d'affichage de l'image: 12 389 014 - 12 345 732 = 43 282 cycles, soit 10 fois moins de temps d'affichage qu'avec memcpy!
+- Temps d'affichage de l'image: 2 476 462 - 2 432 848 = 43 614 cycles, soit 10 fois moins de temps d'affichage qu'avec memcpy!
 
+
+### D5
+Sans l'appel à *fb_completed()* et 1 mot par rafale:
+
+- Temps de construction de l'image: 2 432 844 cycles
+
+- Temps d'affichage de l'image: 2 436 605 - 2 432 844 = 3 761 cycles soit 1000 fois moins qu'en attendant avec fb_completed!
+
+Le défaut est que lors de l'affichage des différentes étapes, sur le bords gauche de l'image, les carrés ne sont pas de la même taille que sur le reste de l'image.\
+Ceci est dû au fait que le DMA est probablement trop lent par rapport au programme utilisateur qui n'attend plus que le DMA ait finit d'écrire dans le frame buffer avec l'appel à fb_completed(). Les images se mélangent donc car le programme demande au DMA d'écrire plusieur images en même temps. <!-- TODO peut etre pas sur, pas clair-->
+
+### D6
+La variable *_dma_busy* est mise à 1 dans la fonction *_fb_read* et *_fb_write*.
+Elle est mise à 0 dans la fonction *_isr_dma*. <!-- TODO où est déclarée _dma_busy?? -->
+
+## E - Pipeline logiciel
+
+### E1
+Pour passer de la période *(n)* à la période *(n+1)* il faut vérifier que la constructions et l'affichage soit finit dans les deux buffers pour ne pas avoir d'accès concurrents. Comme l'affichage est beaucoup plus rapide que la construction on doit vérifier seulement que la constructions est finie. <!-- TODO pas sur?? -->
+
+### E2
+La durée 
+
+- Temps de construction de l'image: 3 104 741 cycles
+
+- Temps d'affichage de l'image: 6 218 657 -  6 215 105 = 3 552 cycles
+
+On a un temps d'affichage un peu moins long de 2 000 cycles environ.\
+Le gain n'est pas très significatif car l'affichage est beaucoup plus court que la construction de l'image d'environ un facteur 1 000.\
+La parallèlisation de ces deux tâches ne provoque donc pas un gain significatif.
+
+12 345 946 cycles DMA
+
+15 606 323 cycles PIPE
+
+## F - Traitement d'erreurs
+
+### F1
+
+
+
+
+<!-- TODO ACTIVER -SNOOP 1!!! -->
+<!-- TODO ACTIVER -SNOOP 1!!! -->
+<!-- TODO ACTIVER -SNOOP 1!!! -->
