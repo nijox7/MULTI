@@ -23,10 +23,7 @@
 reset:
     .set noreorder
 
-    # initialises interrupt vector
-    la    $26,	  _interrupt_vector
-    la    $27,    _isr_tty_get
-    sw    $27,    12($26)           # _interrupt_vector[3] <= _isr_tty_get
+    # initialises interrupt vector for dma
     la    $27,    _isr_dma
     sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
 
@@ -41,6 +38,11 @@ reset:
     bne   $27,    $0,     proc3
 
 proc0:
+    # initialises interrupt vector for tty
+    la    $26,	  _interrupt_vector
+    la    $27,    _isr_tty_get
+    sw    $27,    12($26)           # _interrupt_vector[3] <= _isr_tty_get
+
     # initializes the ICU MASK[0] register
     la    $26,    seg_icu_base
     addiu $26,    $26,    0         # ICU[0]
@@ -65,6 +67,11 @@ proc0:
     .set reorder
 
 proc1:
+    # initialises interrupt vector for tty
+    la    $26,	  _interrupt_vector
+    la    $27,    _isr_tty_get
+    sw    $27,    20($26)           # _interrupt_vector[5] <= _isr_tty_get
+
     # initializes the ICU[1] MASK register
     li      $26,    seg_icu_base
     addi    $26,    0x20          # ICU[1]
@@ -87,6 +94,11 @@ proc1:
     eret
 
 proc2:
+    # initialises interrupt vector for tty
+    la    $26,	  _interrupt_vector
+    la    $27,    _isr_tty_get
+    sw    $27,    28($26)           # _interrupt_vector[7] <= _isr_tty_get
+
     # initializes the ICU[2] MASK register
     li      $26,    seg_icu_base
     addi    $26,    0x40          # ICU[2]
@@ -104,6 +116,11 @@ proc2:
     eret
 
 proc3:
+    # initialises interrupt vector for tty
+    la    $26,	  _interrupt_vector
+    la    $27,    _isr_tty_get
+    sw    $27,    36($26)           # _interrupt_vector[9] <= _isr_tty_get
+
     # initializes the ICU[1] MASK register
     li      $26,    seg_icu_base
     addi    $26,    0x80          # ICU[1]
@@ -119,6 +136,8 @@ proc3:
     lw    $26,    12($26)         # $26 <= main[1], chaque adresse est sur 4 octet donc on fait 4($26)
     mtc0  $26,    $14            # write it in EPC register
     eret
+
+    .set reorder
 
 .endfunc
 .size    reset, .-reset
