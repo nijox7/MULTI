@@ -28,9 +28,10 @@ __attribute__ ((constructor)) void main() {
             tty_printf("\n!!! error in fb_syn_write syscall !!!\n"); 
             // exit();
         }
+
 	    if(fb_completed()) { // wait until fb_write() finished
             tty_printf("\n!!! error in fb_completed syscall !!!\n");
-            exit();
+//            exit();
         };
 
         tty_printf(" - display OK at cycle %d\n", proctime());
