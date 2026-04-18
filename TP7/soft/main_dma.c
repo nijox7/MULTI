@@ -39,4 +39,3 @@ __attribute__ ((constructor)) void main() {
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
     exit(); 
 } // end main
-

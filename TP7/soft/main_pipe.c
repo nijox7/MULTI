@@ -36,7 +36,7 @@ __attribute__ ((constructor)) void main() {
         }
 
         if (i < 5){ // construction
-            tty_printf("\n*** damier %d ***\n\n", i);
+            tty_printf("\n*** damier %d ***\n\n", i+1);
             for (int pixel = 0; pixel < NPIXEL; pixel += 1) { 
                 for (int line = 0 ; line < NLINE ; line += 1) {
                     if (( (pixel>>(i+1) & 0x1) && !(line>>(i+1) & 0x1)) || 
@@ -51,13 +51,13 @@ __attribute__ ((constructor)) void main() {
             tty_printf(" - build   OK at cycle %d\n", proctime());
         }
 
-        // if (i > 0){
-        //     if(fb_completed()) { // wait until fb_write() finished
-        //         tty_printf("\n!!! error in fb_completed syscall !!!\n");
-        //         exit();
-        //     }
-        //     tty_printf(" - display OK at cycle %d\n", proctime());
-        // }
+        if (i > 0){
+            if(fb_completed()) { // wait until fb_write() finished
+                tty_printf("\n!!! error in fb_completed syscall !!!\n");
+                exit();
+            }
+            tty_printf(" - display OK at cycle %d\n", proctime());
+        }
     }
 
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
