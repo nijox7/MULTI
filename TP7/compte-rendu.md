@@ -134,7 +134,44 @@ La parallèlisation de ces deux tâches ne provoque donc pas un gain significati
 ## F - Traitement d'erreurs
 
 ### F1
+Le programme utilisateur ne doit pas pouvoir accéder directement à la zone protégée de l'espace adressable, fb_write vérifie donc que *fb_write* n'écrive pas directement le contenu de l'espace protégé car l'utilisateur n'en a pas le droit.
+Ce type d'erreur doit absolument être détecté par le contrôleur DMA car l'utilisateur pourrait par exemple modifier le registre busy du DMA ce qui n'est pas prévu par le comportement du composant et pourrait provoquer des bugs.
+<!-- TODO Pas très clair? -->
 
+### F2
+exit(1) (from pibus_dma.cpp)\
+SYSCALL_EXIT (from stdio.c)\
+_exit() (from common.c)
+
+Dans *pibus_dma.cpp*, le contrôleur émet une requête d'irq à la fin de la transition lors d'une erreur:
+> if (((r_master_fsm == DMA_SUCCESS) ||\
+         (r_master_fsm == DMA_READ_ERROR)  ||\
+         (r_master_fsm == DMA_WRITE_ERROR)) && (r_irq_disable == 0)) {\
+        p_irq = true;\
+    }
+
+Ceci émet donc le signal *signal_irq_dma* qui connecte le DMA et l'ICU dans *tp5_top.cpp*:
+> dma.p_irq   (signal_irq_dma);
+> icu.p_irq_in[0](signal_irq_dma);
+
+L'ICU va donc rediriger cette interruption vers les processeurs concernés par le mask.\
+Ensuite cette interruption va provoquer l'appel à _giet qui va appeler _int_handler puis _int_demux.\
+Cela va appeler _isr_dma qui (dans *irq_handler.c*) qui correspond à la routine d'interruption du DMA.\
+L'isr va enregistrer dans le status du DMA dans DMA_LEN, afin de savoir si la transaction s'est terminé (=0) ou a été interrompue (>0).\
+L'isr va également mettre à 0 la variable *_dma_busy* afin de déclarer la fin de la transaction du DMA.  
+
+L'appel à la fonction *fb_completed()* (*drivers.c*)  permet donc d'attendre que la transaction soit finie, puis de vérifier s'il elle s'est faite jusqu'au bout (DMA_LEN = 0) ou si elle n'a pas pu se terminer correctement (DMA_LEN > 0). Cet appel permet donc de constater si le DMA a reçu un erreur du Bus.
+
+### F3
+- Si l'adresse correspond à une adresse non définie comme 0x0 ou 0x7, l'appel à fb_completed() retourne la valeur 1.
+Cela signifie donc que isr_dma a été appelée alors que la transaction n'était pas finie car DMA_LEN n'est pas égal à 0 vu que fb_completed a renvoyé 1.\
+
+- Si l'adresse appartient à la zone protégée > 0x80000000, c'est le driver du Frame_buffer avec l'appel à fb_write qui échoue.
+
+
+## G - Amélioration du parallèlisme
+
+On change le nombre de processeurs dans *config.h*.\
 
 
 

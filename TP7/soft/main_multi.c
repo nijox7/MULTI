@@ -7,6 +7,8 @@
 __attribute__ ((constructor)) void main() {
     unsigned char BUF1[NPIXEL * NLINE];
     unsigned char BUF2[NPIXEL * NLINE];
+    int n = procid();
+    int nprocs = NB_PROCS;
 
     unsigned char* buf_build; // buffer pour construire l'image
     unsigned char* buf_print; // buffer pour afficher l'image
@@ -36,28 +38,35 @@ __attribute__ ((constructor)) void main() {
         }
 
         if (i < 5){ // construction
+            barrier_init(4, n); // barière pour 4 processeurs, initialisation pour le proc n
+
             tty_printf("\n*** damier %d ***\n\n", i+1);
             for (int pixel = 0; pixel < NPIXEL; pixel += 1) { 
                 for (int line = 0 ; line < NLINE ; line += 1) {
-                    if (( (pixel>>(i+1) & 0x1) && !(line>>(i+1) & 0x1)) || 
-                        (!(pixel>>(i+1) & 0x1) &&  (line>>(i+1) & 0x1))) {
-                        buf_build[NPIXEL * line + pixel] = 0xFF;
+                    if (line % NB_PROCS == n){
+                        if (( (pixel>>(i+1) & 0x1) && !(line>>(i+1) & 0x1)) || 
+                            (!(pixel>>(i+1) & 0x1) &&  (line>>(i+1) & 0x1))) {
+                            buf_build[NPIXEL * line + pixel] = 0xFF;
+                        }
+                        else {
+                            buf_build[NPIXEL * line + pixel] = 0x0;
+                        }
                     }
-                    else {
-                        buf_build[NPIXEL * line + pixel] = 0x0;
-                    }
+                    
                 }
             }
             tty_printf(" - build   OK at cycle %d\n", proctime());
         }
 
-        if (i > 0){
+        if (i > 0 && n == 0){ // seulement le processeur d'id 0
             if(fb_completed()) { // wait until fb_write() finished
                 tty_printf("\n!!! error in fb_completed syscall !!!\n");
                 exit();
             }
             tty_printf(" - display OK at cycle %d\n", proctime());
         }
+
+        if (i < 5) barrier_wait();
     }
 
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
