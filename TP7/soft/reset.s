@@ -23,40 +23,37 @@
 reset:
     .set noreorder
 
-    # initialises the isr DMA
-    la    $26,    _interrupt_vector
+    # initialises interrupt vector
+    la    $26,	  _interrupt_vector
+    la    $27,    _isr_tty_get
+    sw    $27,    12($26)           # _interrupt_vector[3] <= _isr_tty_get
     la    $27,    _isr_dma
     sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
 
     # get the processor id
     mfc0  $27,    $15,    1      # get the proc_id
-    andi  $27,    $27,    0x1    # no more than 2 processors
     bne   $27,    $0,     proc1
-    addi  $27,    -1
+    addi  $27,    $27,    -1
     bne   $27,    $0,     proc1
-    addi  $27,    -1
+    addi  $27,    $27,    -1
     bne   $27,    $0,     proc2
-    addi  $27,    -1
+    addi  $27,    $27,    -1
     bne   $27,    $0,     proc3
 
 proc0:
-    # initialises interrupt vector 
-    la    $27,    _isr_tty_get
-    sw    $27,    12($26)           # _interrupt_vector[3] <= _isr_tty_get
-
     # initializes the ICU MASK[0] register
     la    $26,    seg_icu_base
     addiu $26,    $26,    0         # ICU[0]
     li    $27,    0b00001001        # IRQ_DMA[0] & IRQ_TTY[0]
     sw    $27,    8($26)
 
-    # initializes stack pointer 
+    # initializes stack pointer
     la    $29,    seg_stack_base
     li    $27,    0x40000           # stack size = 256K
     addu  $29,    $29,    $27       # $29 <= seg_stack_base + 64K
 
     # initializes SR register
-    li    $26,    0x0000FF13    
+    li    $26,    0x0000FF13
     mtc0  $26,    $12               # SR <= 0x0000FF13
 
     # jump to main in user mode
@@ -68,12 +65,8 @@ proc0:
     .set reorder
 
 proc1:
-    # initialises interrupt vector entries for PROC[1]
-    la      $27,    _isr_tty_get
-    sw      $27,    20($26)           # _interrupt_vector[5] <= _isr_tty_get
-
     # initializes the ICU[1] MASK register
-    li      $26,    seg_icu_base 
+    li      $26,    seg_icu_base
     addi    $26,    0x20          # ICU[1]
     li      $29,    0b00100001    # IRQ_DMA[0] & IRQ_TTY[1]
     sw      $27,    8($26)
@@ -94,12 +87,8 @@ proc1:
     eret
 
 proc2:
-    # initialises interrupt vector entries for PROC[2]
-    la      $27,    _isr_tty_get
-    sw      $27,    28($26)           # _interrupt_vector[7] <= _isr_tty_get
-
     # initializes the ICU[2] MASK register
-    li      $26,    seg_icu_base 
+    li      $26,    seg_icu_base
     addi    $26,    0x40          # ICU[2]
     li      $29,    0b10000001    # IRQ_DMA[0] & IRQ_TTY[2]
     sw      $27,    8($26)
@@ -115,12 +104,8 @@ proc2:
     eret
 
 proc3:
-    # initialises interrupt vector entries for PROC[3]
-    la      $27,    _isr_tty_get
-    sw      $27,    36($26)           # _interrupt_vector[9] <= _isr_tty_get
-
     # initializes the ICU[1] MASK register
-    li      $26,    seg_icu_base 
+    li      $26,    seg_icu_base
     addi    $26,    0x80          # ICU[1]
     li      $29,    0b1000000001  # IRQ_DMA[0] & IRQ_TTY[3]
     sw      $27,    8($26)
