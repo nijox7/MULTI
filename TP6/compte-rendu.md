@@ -1,6 +1,7 @@
 # Compte-rendu TP6
 
-## C - Composants périphériques
+## Notes personelles
+
 
 Pibusslcu -> 32 lignes d'interruptions IN
           -> 1 ligne OUT (1 sortie / processeur)
@@ -54,6 +55,9 @@ _isr_tty_get  -> valeur saisie au clavier
 >char c = _tty_read_irq();\
 _tty_get_buf[i] = c;\
 _tty_get_full = 0;
+
+
+## C - Composants périphériques
 
 ### C1
 Le composant PibusMultiTimer est configurable en logiciel, il est donc une cible sur le bus pour permettre de le configurer en accèdant à son registre de mask.
@@ -122,21 +126,17 @@ Par exemple, les signaux internes reliant le timer à l'icu sont les deux premi�
 
 ## D - Lancement des tâches
 
-### D1
-<!-- TODO Détailler?? (pas obligé, pas de question) -->
-
 ### D2
 L'adresse de main_prime() est 0x004012e8.\
 L'adresse de main_pgcd() est 0x004013fc.
 
 ### D3
-On force GCC à construire la table de saut au début du segment data en le spécifiant dans le fichier *app.ld* qui va spécifier au linker la construction de cette table. C'est la ligne "*(.ctors)" qui permet de dire au linker que l'on veut mettre tous les constructeurs au début du segment seg_data.
-<!-- TODO, app.ld? -->
+On force GCC à construire la table de saut au début du segment data en le spécifiant dans le fichier *app.ld* qui va spécifier au linker la construction de cette table. C'est la ligne "*(.ctors)" qui permet de dire au linker que l'on veut mettre tous les constructeurs au début du segment seg_data.\
+(vu dans app.ld)
 
 ### D4
 Le programme de calcul du PGCD attend une réponse de l'utilisateur, il attend donc une interruption.
-Pour cela il faut donc configurer l'ICU afin de gérer les interruptions multiprocesseur.
-<!-- TODO à détailler, pas clair? -->
+Pour cela il faut donc configurer l'ICU afin de gérer les interruptions multi processeurs.
 
 
 ## E - Activation du Timer
@@ -188,15 +188,90 @@ On identifie la première occurence de "*sel_tim* = 1".
 <!-- TODO VOIR ACQUITTEMENT??? -->
 
 ### E7
-<!-- TODO  MAISON -->
+<!-- TODO  MAISON quand est ce que l'interruption est acquitée? -->
 - Le processeur 0 reçoit la première interruption du TIMER[0] au cycle 50067.\
 On identifie la première occurence de "*tim_irq[0]* = 1".
-
 
 ### E8
 <!-- TODO MAISON -->
 
+### E9
+<!-- TODO MAISON -->
+
+
 ## F - Activation des interruptions TTY
 
 ### F1
-L'ISR doit être asynchrone car sinon, cela ralentira probablement le système si l'on avait plusieurs interruptions à la suite. Cela provoquerait également l'interruption immédiate de la tâche actuelle, alors que ce n'est pas nécessaire.
+Lors de l'exécution d'un programme utilisateur, si celui-ci lit le buffer temporaire, pour assurer la cohérence mémoire on ne doit pas avoir de valeur asynchrone. S'il le programme lit deux fois le buffer et que la valeur change, cela pourrait poser problème.\
+On règle donc cette incohérence en utilisant la fonction *_tty_read_irq* pour metre à jour le buffer.
+
+### F2
+L'utilisateur écrit un caractère, un interruption est déclenchée provoque l'appel de l'ISR *ist_tty_get* par le composant TTY qui va mettre le caractère dans le *_tty_get_buf* et mettre *_tty_get_full* à 1.\
+Avec giet on aura donc 
+Ensuite, le logiciel vérifiera et lira la valeur grâce à l'appel système *tty_read_irq* afin de l'enregistrer dans un buffeur utilisateur.
+
+Les fonctions appelées seront donc les suivantes:\
+*_giet* -> *_int_handler* -> *_int_demux* -> *_isr_tty_get*\ -> *_isr_tty_get_indexed*
+Puis *_tty_read_irq* sera appelée par le logiciel de manière synchrone pour récupérer le caractère.
+
+### F3
+D'après le code décrit dans *irq_handler.c*, si le tampo *_tty_get_buf* est plein au moment de l'exécution de l'ISR, celui-ci est réecrit par la nouvelle valeur lue.
+
+### F4
+<b>Fonction *_tty_read_irq()*:</b>
+
+Lit le buffer *_tty_get_full* du composant TTY pour vérifier si un nouveau caractère est disponible.\
+Si aucun caractère n'est disponible(*_tty_get_full == 0*), retourne 0 et ne fait rien.\
+Si un caractère est disponible (*_tty_get_full == 1*), enregistre le contenu du buffer *_tty_get_buf* dans un buffer passé en argument. Pour signaler qu'un caractère a été lu, met à 0 *_tty_get_full* et retourne 1.
+
+Le numéro du TTY est calculé en récupérant le procid qui permet de récupérer le task_id puis le tty_id grâce à des tableaux.
+
+### F5
+(*tty_getw_irq* se trouve dans *giet_2011/app/stdio.c*)
+
+<b>Fonction *tty_getw_irq()*:</b>
+
+- Analysez le code de l'appel système tty_getw_irq(). 
+> Lit jusqu'à rencontrer un *"retour chariot"* ou un *"line feed"* ou au bout de 32 caractères lus. Puis convertit la suite de caractères décimaux en string.
+
+- Quels sont les caractères spéciaux qui sont analysés et traités par cet appel système ? 
+> Les caractères spéciaux analysés sont *"retour chariot"* (0x0D) ou *"line feed"* (0x0A). Lorsque l'un des deux est rencontré, la fonction arrête de lire le buffer. Le *"DEL character"* (0x7F) est également analysé et permet d'effacer le dernier caractère lu par un espace.
+
+
+- Que se passe-t-il si le nombre de caractères décimaux saisis au clavier défini un nombre trop grand pour être codé sur 32 bits ?
+> Si le nombre de caractères décimaux saisis est trop grand, la fonction efface tous les caractères et retourne 0.
+
+
+### F6
+
+- Les tableaux _tty_get_buf[] et _tty_get_full[] sont déclarés dans le fichier drivers.c. Pourquoi ces variables doivent-elles être déclarées avec l'attribut volatile ?
+> On déclare ces variables en volatile pour forcer GCC à faire un accès mémoire lorsque l'on va lire ces tableaux. Sans cela, GCC optimiserait ces variables et les enregistrerait dans un registre qui fausserait la lecture de ceux-ci. 
+
+- Dans quel segment mémoire ces variables sont-elles rangées ?
+> Ces variables sont donc rangées en RAM dans un segment non-cachable qui fait partie du Kernel (kdata).
+
+- Pourquoi ce segment doit-il être déclaré non cachable ?
+> S'il était cachable, cela empêcherait d'effectuer un accès mémoire et on reviendrait au même problème qu'on avait sans l'attribut volatile, leurs valeurs ne seraient pas sensibles au fonctionnement asynchrone.
+
+
+### F7
+(proc0)
+>la     $29,    _isr_tty_get\
+sw     $29,    12($27)       # _vector_interrupt[3] = _isr_tty_get
+
+(proc1)
+>la     $29,    _isr_tty_get\
+sw     $29,    20($27)       # _vector_interrupt[5] = _isr_tty_get
+
+
+### F8
+Pour connaître la position des composants dans le mask, on regarde la description du fichier *tp5_top.cpp* qui dit à quelle entrée IRQ_IN un comoposant est relié.\
+On voit que TTY est relié à l'entrée 3 de l'ICU.\
+
+(proc0)
+>
+
+(proc1)
+>
+
+<!-- TODO les masks sont communs ??? BAH OUI SUREMENT CHACUN A LE SIEN MAIS LES NUMEROS SONT LES MEMES !!-->
