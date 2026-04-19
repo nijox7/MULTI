@@ -1,14 +1,15 @@
 
 #include "stdio.h"
+#include "config.h"
 
 #define NPIXEL 256
 #define NLINE  256
 
 __attribute__ ((constructor)) void main() {
+    /*
     unsigned char BUF1[NPIXEL * NLINE];
     unsigned char BUF2[NPIXEL * NLINE];
     int n = procid();
-    int nprocs = NB_PROCS;
 
     unsigned char* buf_build; // buffer pour construire l'image
     unsigned char* buf_print; // buffer pour afficher l'image
@@ -34,7 +35,7 @@ __attribute__ ((constructor)) void main() {
                 tty_printf("\n!!! error in fb_write syscall !!!\n"); 
                 exit();
             }
-            
+
         }
 
         if (i < 5){ // construction
@@ -52,7 +53,6 @@ __attribute__ ((constructor)) void main() {
                             buf_build[NPIXEL * line + pixel] = 0x0;
                         }
                     }
-                    
                 }
             }
             tty_printf(" - build   OK at cycle %d\n", proctime());
@@ -66,9 +66,10 @@ __attribute__ ((constructor)) void main() {
             tty_printf(" - display OK at cycle %d\n", proctime());
         }
 
-        if (i < 5) barrier_wait();
+        if (i < 5) barrier_wait(n);
     }
 
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
     exit(); 
+    */
 } // end main

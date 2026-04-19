@@ -104,12 +104,13 @@ Disassembly of section .pdr:
 Disassembly of section .sbss:
 
 00000000 <_current_task_array>:
-   0:	00000000 	nop
+	...
 
 Disassembly of section .sdata:
 
 00000000 <_task_number_array>:
-   0:	01010101 	0x1010101
+   0:	Address 0x0000000000000000 is out of bounds.
+
 
 Disassembly of section .comment:
 
