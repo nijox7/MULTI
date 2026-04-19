@@ -29,7 +29,7 @@ reset:
     sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
 
     mfc0  $27,    $15,    1      # get the processor id
-    andi  $27,    0b11       	# no more than 4 processors
+    andi  $27,    0b11       	 # no more than 4 processors
     beq   $27,    $0,     proc0
     addi  $27,    $27,    -1
     beq   $27,    $0,     proc1
