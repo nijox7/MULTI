@@ -13,7 +13,7 @@ SYS_OBJS= reset.o \
           irq_handler.o \
           exc_handler.o 
 
-MAIN= main_dma
+MAIN= main_multi
 APP_OBJS= stdio.o $(MAIN).o 
 
 GIET_SYS_PATH= /users/enseig/alain/giet_2011/sys

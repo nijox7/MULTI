@@ -13,7 +13,7 @@ Disassembly of section .text:
   14:	03a0f025 	move	s8,sp
   18:	24020001 	li	v0,1
   1c:	afc20010 	sw	v0,16(s8)
-  20:	10000068 	b	1c4 <main+0x1c4>
+  20:	10000062 	b	1ac <main+0x1ac>
   24:	00000000 	nop
   28:	8fc50010 	lw	a1,16(s8)
   2c:	3c020000 	lui	v0,0x0
@@ -94,7 +94,7 @@ Disassembly of section .text:
  158:	00002025 	move	a0,zero
  15c:	0c000000 	jal	0 <main>
  160:	00000000 	nop
- 164:	10400005 	beqz	v0,17c <main+0x17c>
+ 164:	10400007 	beqz	v0,184 <main+0x184>
  168:	00000000 	nop
  16c:	3c020000 	lui	v0,0x0
  170:	24440034 	addiu	a0,v0,52
@@ -102,43 +102,37 @@ Disassembly of section .text:
  178:	00000000 	nop
  17c:	0c000000 	jal	0 <main>
  180:	00000000 	nop
- 184:	10400005 	beqz	v0,19c <main+0x19c>
+ 184:	0c000000 	jal	0 <main>
  188:	00000000 	nop
- 18c:	3c020000 	lui	v0,0x0
- 190:	2444005c 	addiu	a0,v0,92
- 194:	0c000000 	jal	0 <main>
- 198:	00000000 	nop
- 19c:	0c000000 	jal	0 <main>
- 1a0:	00000000 	nop
- 1a4:	00402825 	move	a1,v0
- 1a8:	3c020000 	lui	v0,0x0
- 1ac:	24440084 	addiu	a0,v0,132
- 1b0:	0c000000 	jal	0 <main>
- 1b4:	00000000 	nop
- 1b8:	8fc20010 	lw	v0,16(s8)
- 1bc:	24420001 	addiu	v0,v0,1
- 1c0:	afc20010 	sw	v0,16(s8)
- 1c4:	8fc20010 	lw	v0,16(s8)
- 1c8:	28420006 	slti	v0,v0,6
- 1cc:	1440ff96 	bnez	v0,28 <main+0x28>
- 1d0:	00000000 	nop
- 1d4:	0c000000 	jal	0 <main>
- 1d8:	00000000 	nop
- 1dc:	00402825 	move	a1,v0
- 1e0:	3c020000 	lui	v0,0x0
- 1e4:	244400a0 	addiu	a0,v0,160
- 1e8:	0c000000 	jal	0 <main>
- 1ec:	00000000 	nop
- 1f0:	0c000000 	jal	0 <main>
- 1f4:	00000000 	nop
- 1f8:	00000000 	nop
- 1fc:	34088038 	li	t0,0x8038
- 200:	03c8e821 	addu	sp,s8,t0
- 204:	8fbf7fec 	lw	ra,32748(sp)
- 208:	8fbe7fe8 	lw	s8,32744(sp)
- 20c:	27bd7ff0 	addiu	sp,sp,32752
- 210:	03e00008 	jr	ra
- 214:	00000000 	nop
+ 18c:	00402825 	move	a1,v0
+ 190:	3c020000 	lui	v0,0x0
+ 194:	2444005c 	addiu	a0,v0,92
+ 198:	0c000000 	jal	0 <main>
+ 19c:	00000000 	nop
+ 1a0:	8fc20010 	lw	v0,16(s8)
+ 1a4:	24420001 	addiu	v0,v0,1
+ 1a8:	afc20010 	sw	v0,16(s8)
+ 1ac:	8fc20010 	lw	v0,16(s8)
+ 1b0:	28420006 	slti	v0,v0,6
+ 1b4:	1440ff9c 	bnez	v0,28 <main+0x28>
+ 1b8:	00000000 	nop
+ 1bc:	0c000000 	jal	0 <main>
+ 1c0:	00000000 	nop
+ 1c4:	00402825 	move	a1,v0
+ 1c8:	3c020000 	lui	v0,0x0
+ 1cc:	24440078 	addiu	a0,v0,120
+ 1d0:	0c000000 	jal	0 <main>
+ 1d4:	00000000 	nop
+ 1d8:	0c000000 	jal	0 <main>
+ 1dc:	00000000 	nop
+ 1e0:	00000000 	nop
+ 1e4:	34088038 	li	t0,0x8038
+ 1e8:	03c8e821 	addu	sp,s8,t0
+ 1ec:	8fbf7fec 	lw	ra,32748(sp)
+ 1f0:	8fbe7fe8 	lw	s8,32744(sp)
+ 1f4:	27bd7ff0 	addiu	sp,sp,32752
+ 1f8:	03e00008 	jr	ra
+ 1fc:	00000000 	nop
 
 Disassembly of section .reginfo:
 
@@ -192,32 +186,22 @@ Disassembly of section .rodata:
   50:	61637379 	0x61637379
   54:	21206c6c 	addi	zero,t1,27756
   58:	000a2121 	0xa2121
-  5c:	2121210a 	addi	at,t1,8458
-  60:	72726520 	0x72726520
-  64:	6920726f 	0x6920726f
-  68:	6266206e 	0x6266206e
-  6c:	6d6f635f 	0x6d6f635f
-  70:	74656c70 	jalx	195b1c0 <main+0x195b1c0>
-  74:	73206465 	0x73206465
-  78:	61637379 	0x61637379
-  7c:	21206c6c 	addi	zero,t1,27756
-  80:	000a2121 	0xa2121
-  84:	64202d20 	0x64202d20
-  88:	6c707369 	0x6c707369
-  8c:	4f207961 	c3	0x1207961
-  90:	7461204b 	jalx	184812c <main+0x184812c>
-  94:	63796320 	0x63796320
-  98:	2520656c 	addiu	zero,t1,25964
-  9c:	00000a64 	0xa64
-  a0:	6e69460a 	0x6e69460a
-  a4:	20756420 	addi	s5,v1,25632
-  a8:	676f7270 	0x676f7270
-  ac:	6d6d6172 	0x6d6d6172
-  b0:	75612065 	jalx	5848194 <main+0x5848194>
-  b4:	63796320 	0x63796320
-  b8:	3d20656c 	0x3d20656c
-  bc:	0a642520 	j	9909480 <main+0x9909480>
-  c0:	Address 0x00000000000000c0 is out of bounds.
+  5c:	64202d20 	0x64202d20
+  60:	6c707369 	0x6c707369
+  64:	4f207961 	c3	0x1207961
+  68:	7461204b 	jalx	184812c <main+0x184812c>
+  6c:	63796320 	0x63796320
+  70:	2520656c 	addiu	zero,t1,25964
+  74:	00000a64 	0xa64
+  78:	6e69460a 	0x6e69460a
+  7c:	20756420 	addi	s5,v1,25632
+  80:	676f7270 	0x676f7270
+  84:	6d6d6172 	0x6d6d6172
+  88:	75612065 	jalx	5848194 <main+0x5848194>
+  8c:	63796320 	0x63796320
+  90:	3d20656c 	0x3d20656c
+  94:	0a642520 	j	9909480 <main+0x9909480>
+  98:	Address 0x0000000000000098 is out of bounds.
 
 
 Disassembly of section .ctors:

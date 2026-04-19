@@ -6,7 +6,7 @@
 #define NLINE  256
 
 __attribute__ ((constructor)) void main() {
-    /*
+
     unsigned char BUF1[NPIXEL * NLINE];
     unsigned char BUF2[NPIXEL * NLINE];
     int n = procid();
@@ -29,15 +29,15 @@ __attribute__ ((constructor)) void main() {
             buf_build = BUF2;
             buf_print = BUF1;
         }
-
-        if (i > 0){ // affichage
+/*
+        if (i > 0 && n == 0){ // affichage
             if (fb_write(0, buf_print, NLINE * NPIXEL) != 0) {
                 tty_printf("\n!!! error in fb_write syscall !!!\n"); 
                 exit();
             }
 
         }
-
+*/
         if (i < 5){ // construction
             barrier_init(4, n); // barière pour 4 processeurs, initialisation pour le proc n
 
@@ -47,17 +47,17 @@ __attribute__ ((constructor)) void main() {
                     if (line % NB_PROCS == n){
                         if (( (pixel>>(i+1) & 0x1) && !(line>>(i+1) & 0x1)) || 
                             (!(pixel>>(i+1) & 0x1) &&  (line>>(i+1) & 0x1))) {
-                            buf_build[NPIXEL * line + pixel] = 0xFF;
+//                            buf_build[NPIXEL * line + pixel] = 0xFF;
                         }
                         else {
-                            buf_build[NPIXEL * line + pixel] = 0x0;
+//                            buf_build[NPIXEL * line + pixel] = 0x0;
                         }
                     }
                 }
             }
             tty_printf(" - build   OK at cycle %d\n", proctime());
         }
-
+/*
         if (i > 0 && n == 0){ // seulement le processeur d'id 0
             if(fb_completed()) { // wait until fb_write() finished
                 tty_printf("\n!!! error in fb_completed syscall !!!\n");
@@ -67,9 +67,9 @@ __attribute__ ((constructor)) void main() {
         }
 
         if (i < 5) barrier_wait(n);
+*/
     }
 
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
-    exit(); 
-    */
+    exit();
 } // end main

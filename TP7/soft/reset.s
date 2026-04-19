@@ -27,8 +27,9 @@ reset:
     la    $26,    _interrupt_vector
     la    $27,    _isr_dma
     sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
-/*
+
     mfc0  $27,    $15,    1      # get the processor id
+    andi  $27,    0b11       	# no more than 4 processors
     beq   $27,    $0,     proc0
     addi  $27,    $27,    -1
     beq   $27,    $0,     proc1
@@ -36,7 +37,6 @@ reset:
     beq   $27,    $0,     proc2
     addi  $27,    $27,    -1
     beq   $27,    $0,     proc3
-*/
 
 proc0:
     # initialises interrupt vector for tty
@@ -52,8 +52,8 @@ proc0:
 
     # initializes stack pointer
     la    $29,    seg_stack_base
-    li    $27,    0x10000           # stack size = 64K
-    addu  $29,    $29,    $27       # $29 <= seg_stack_base + 64K
+    li    $26,    0x40000           # stack size = 256K
+    addu  $29,    $29,    $26       # seg_stack_base + 256K
 
     # initializes SR register
     li    $26,    0x0000FF13
@@ -66,7 +66,7 @@ proc0:
     eret
 
     .set reorder
-/*
+
 proc1:
     # initialises interrupt vector for tty
     la    $26,	  _interrupt_vector
@@ -81,8 +81,8 @@ proc1:
 
     # initializes stack pointer for PROC[1]
     la      $29,    seg_stack_base
-    li      $26,    0x20000
-    add     $29,    $29,   $26  # $29 <= seg_stack_base + 2*64K
+    li      $26,    0x80000
+    add     $29,    $29,   $26  # $29 <= seg_stack_base + 2*256K
 
     # initializes Status Register for PROC[1]
     li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
@@ -107,9 +107,9 @@ proc2:
     sw      $27,    8($26)
 
     # initializes stack pointer for PROC[2]
-    la    $29,	seg_stack_base
-    li    $26,  0x30000
-    add   $29,	$29,  $26	# seg_stack_base + 3*64
+    la      $29,    seg_stack_base
+    li      $26,    0xC0000
+    add     $29,    $29,  $26	# seg_stack_base + 3*256K
 
     # initializes Status Register for PROC[2]
     li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
@@ -135,8 +135,8 @@ proc3:
 
     # intitializes stack pointer for PROC[3]
     la    $29,	seg_stack_base
-    li    $26,  0x40000
-    add   $29,  $29,  $26 	# seg_stack_base + 4*64
+    li    $26,  0x100000
+    add   $29,  $29,  $26 	# seg_stack_base + 4*256k
 
     # initializes Status Register for PROC[3]
     li    $26,  0xFF13      	# user mode, exception level = 1, irq mask = FF, irq enable
@@ -147,9 +147,11 @@ proc3:
     lw    $26,    12($26)       # $26 <= main[3]
     mtc0  $26,    $14           # write it in EPC register
     eret
-*/
+
 
     .set reorder
+
+rien:
 
 .endfunc
 .size    reset, .-reset

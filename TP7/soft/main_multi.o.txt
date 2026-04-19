@@ -5,20 +5,124 @@ main_multi.o:     file format elf32-littlemips
 Disassembly of section .text:
 
 00000000 <main>:
-   0:	27bdfff8 	addiu	sp,sp,-8
-   4:	afbe0004 	sw	s8,4(sp)
-   8:	03a0f025 	move	s8,sp
-   c:	00000000 	nop
-  10:	03c0e825 	move	sp,s8
-  14:	8fbe0004 	lw	s8,4(sp)
-  18:	27bd0008 	addiu	sp,sp,8
-  1c:	03e00008 	jr	ra
+   0:	27bd8010 	addiu	sp,sp,-32752
+   4:	afbf7fec 	sw	ra,32748(sp)
+   8:	afbe7fe8 	sw	s8,32744(sp)
+   c:	3c030001 	lui	v1,0x1
+  10:	34638040 	ori	v1,v1,0x8040
+  14:	03a3e823 	subu	sp,sp,v1
+  18:	03a0f025 	move	s8,sp
+  1c:	0c000000 	jal	0 <main>
   20:	00000000 	nop
+  24:	afc2001c 	sw	v0,28(s8)
+  28:	afc00010 	sw	zero,16(s8)
+  2c:	1000004f 	b	16c <main+0x16c>
+  30:	00000000 	nop
+  34:	8fc20010 	lw	v0,16(s8)
+  38:	30420001 	andi	v0,v0,0x1
+  3c:	1440000a 	bnez	v0,68 <main+0x68>
+  40:	00000000 	nop
+  44:	27c20028 	addiu	v0,s8,40
+  48:	afc20020 	sw	v0,32(s8)
+  4c:	3c020001 	lui	v0,0x1
+  50:	34420018 	ori	v0,v0,0x18
+  54:	27c30010 	addiu	v1,s8,16
+  58:	00621021 	addu	v0,v1,v0
+  5c:	afc20024 	sw	v0,36(s8)
+  60:	10000008 	b	84 <main+0x84>
+  64:	00000000 	nop
+  68:	3c020001 	lui	v0,0x1
+  6c:	34420018 	ori	v0,v0,0x18
+  70:	27c30010 	addiu	v1,s8,16
+  74:	00621021 	addu	v0,v1,v0
+  78:	afc20020 	sw	v0,32(s8)
+  7c:	27c20028 	addiu	v0,s8,40
+  80:	afc20024 	sw	v0,36(s8)
+  84:	8fc20010 	lw	v0,16(s8)
+  88:	28420005 	slti	v0,v0,5
+  8c:	10400034 	beqz	v0,160 <main+0x160>
+  90:	00000000 	nop
+  94:	8fc2001c 	lw	v0,28(s8)
+  98:	00402825 	move	a1,v0
+  9c:	24040004 	li	a0,4
+  a0:	0c000000 	jal	0 <main>
+  a4:	00000000 	nop
+  a8:	8fc20010 	lw	v0,16(s8)
+  ac:	24420001 	addiu	v0,v0,1
+  b0:	00402825 	move	a1,v0
+  b4:	3c020000 	lui	v0,0x0
+  b8:	24440000 	addiu	a0,v0,0
+  bc:	0c000000 	jal	0 <main>
+  c0:	00000000 	nop
+  c4:	afc00014 	sw	zero,20(s8)
+  c8:	1000001a 	b	134 <main+0x134>
+  cc:	00000000 	nop
+  d0:	afc00018 	sw	zero,24(s8)
+  d4:	10000010 	b	118 <main+0x118>
+  d8:	00000000 	nop
+  dc:	8fc30018 	lw	v1,24(s8)
+  e0:	3c028000 	lui	v0,0x8000
+  e4:	34420003 	ori	v0,v0,0x3
+  e8:	00621024 	and	v0,v1,v0
+  ec:	04410005 	bgez	v0,104 <main+0x104>
+  f0:	00000000 	nop
+  f4:	2442ffff 	addiu	v0,v0,-1
+  f8:	2403fffc 	li	v1,-4
+  fc:	00431025 	or	v0,v0,v1
+ 100:	24420001 	addiu	v0,v0,1
+ 104:	00401825 	move	v1,v0
+ 108:	8fc2001c 	lw	v0,28(s8)
+ 10c:	8fc20018 	lw	v0,24(s8)
+ 110:	24420001 	addiu	v0,v0,1
+ 114:	afc20018 	sw	v0,24(s8)
+ 118:	8fc20018 	lw	v0,24(s8)
+ 11c:	28420100 	slti	v0,v0,256
+ 120:	1440ffee 	bnez	v0,dc <main+0xdc>
+ 124:	00000000 	nop
+ 128:	8fc20014 	lw	v0,20(s8)
+ 12c:	24420001 	addiu	v0,v0,1
+ 130:	afc20014 	sw	v0,20(s8)
+ 134:	8fc20014 	lw	v0,20(s8)
+ 138:	28420100 	slti	v0,v0,256
+ 13c:	1440ffe4 	bnez	v0,d0 <main+0xd0>
+ 140:	00000000 	nop
+ 144:	0c000000 	jal	0 <main>
+ 148:	00000000 	nop
+ 14c:	00402825 	move	a1,v0
+ 150:	3c020000 	lui	v0,0x0
+ 154:	24440018 	addiu	a0,v0,24
+ 158:	0c000000 	jal	0 <main>
+ 15c:	00000000 	nop
+ 160:	8fc20010 	lw	v0,16(s8)
+ 164:	24420001 	addiu	v0,v0,1
+ 168:	afc20010 	sw	v0,16(s8)
+ 16c:	8fc20010 	lw	v0,16(s8)
+ 170:	28420006 	slti	v0,v0,6
+ 174:	1440ffaf 	bnez	v0,34 <main+0x34>
+ 178:	00000000 	nop
+ 17c:	0c000000 	jal	0 <main>
+ 180:	00000000 	nop
+ 184:	00402825 	move	a1,v0
+ 188:	3c020000 	lui	v0,0x0
+ 18c:	24440034 	addiu	a0,v0,52
+ 190:	0c000000 	jal	0 <main>
+ 194:	00000000 	nop
+ 198:	0c000000 	jal	0 <main>
+ 19c:	00000000 	nop
+ 1a0:	00000000 	nop
+ 1a4:	3c080001 	lui	t0,0x1
+ 1a8:	35088040 	ori	t0,t0,0x8040
+ 1ac:	03c8e821 	addu	sp,s8,t0
+ 1b0:	8fbf7fec 	lw	ra,32748(sp)
+ 1b4:	8fbe7fe8 	lw	s8,32744(sp)
+ 1b8:	27bd7ff0 	addiu	sp,sp,32752
+ 1bc:	03e00008 	jr	ra
+ 1c0:	00000000 	nop
 
 Disassembly of section .reginfo:
 
 00000000 <.reginfo>:
-   0:	e0000000 	sc	zero,0(zero)
+   0:	e000013c 	sc	zero,316(zero)
 	...
 
 Disassembly of section .MIPS.abiflags:
@@ -34,12 +138,39 @@ Disassembly of section .pdr:
 
 00000000 <.pdr>:
    0:	00000000 	nop
-   4:	40000000 	mfc0	zero,c0_index
+   4:	c0000000 	ll	zero,0(zero)
    8:	fffffffc 	sdc3	$31,-4(ra)
 	...
-  14:	00000008 	jr	zero
+  14:	00020030 	tge	zero,v0
   18:	0000001e 	0x1e
   1c:	0000001f 	0x1f
+
+Disassembly of section .rodata:
+
+00000000 <.rodata>:
+   0:	2a2a2a0a 	slti	t2,s1,10762
+   4:	6d616420 	0x6d616420
+   8:	20726569 	addi	s2,v1,25961
+   c:	2a206425 	slti	zero,s1,25637
+  10:	0a0a2a2a 	j	828a8a8 <main+0x828a8a8>
+  14:	00000000 	nop
+  18:	62202d20 	0x62202d20
+  1c:	646c6975 	0x646c6975
+  20:	4f202020 	c3	0x1202020
+  24:	7461204b 	jalx	184812c <main+0x184812c>
+  28:	63796320 	0x63796320
+  2c:	2520656c 	addiu	zero,t1,25964
+  30:	00000a64 	0xa64
+  34:	6e69460a 	0x6e69460a
+  38:	20756420 	addi	s5,v1,25632
+  3c:	676f7270 	0x676f7270
+  40:	6d6d6172 	0x6d6d6172
+  44:	75612065 	jalx	5848194 <main+0x5848194>
+  48:	63796320 	0x63796320
+  4c:	3d20656c 	0x3d20656c
+  50:	0a642520 	j	9909480 <main+0x9909480>
+  54:	Address 0x0000000000000054 is out of bounds.
+
 
 Disassembly of section .ctors:
 

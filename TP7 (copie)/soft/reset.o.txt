@@ -39,7 +39,7 @@ Disassembly of section .reset:
   38:	af5b0008 	sw	k1,8(k0)
   3c:	3c1d0000 	lui	sp,0x0
   40:	27bd0000 	addiu	sp,sp,0
-  44:	3c1b0001 	lui	k1,0x1
+  44:	3c1b0004 	lui	k1,0x4
   48:	03bbe821 	addu	sp,sp,k1
   4c:	341aff13 	li	k0,0xff13
   50:	409a6000 	mtc0	k0,c0_status
