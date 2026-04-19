@@ -30,7 +30,6 @@ reset:
 /*
     mfc0  $27,    $15,    1      # get the processor id
     beq   $27,    $0,     proc0
-    jal   proc0
     addi  $27,    $27,    -1
     beq   $27,    $0,     proc1
     addi  $27,    $27,    -1
