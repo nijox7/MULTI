@@ -10,7 +10,7 @@
 #       - initializes the stack pointer.
 #       - initializes the EPC register, and jumps to the user code.
 #################################################################################
-        
+
 .section .reset,"ax",@progbits
 
 .extern seg_stack_base
@@ -23,27 +23,27 @@
 reset:
     .set noreorder
 
+    la 	  $26,  _interrupt_vector
+
+    mfc0  $27,	$15,	1	# get processer id
+    andi  $27,  $27,	0	# keep LSB(0)
+    bne	  $27, 	$0,	proc
+
     # initialises interrupt vector for dma
-    la    $26,    _interrupt_vector
-    la    $27,    _isr_dma
-    sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
+    la    $27, 	_isr_dma
+    sw    $27,	0($26)        	# _interrupt_vector[0] <= _isr_dma
 
-    mfc0  $27,    $15,    1      # get the processor id
-    andi  $27,    0b11       	 # no more than 4 processors
-    beq   $27,    $0,     proc0
-    addi  $27,    $27,    -1
-    beq   $27,    $0,     proc1
-    addi  $27,    $27,    -1
-    beq   $27,    $0,     proc2
-    addi  $27,    $27,    -1
-    beq   $27,    $0,     proc3
-
-proc0:
+proc:
     # initialises interrupt vector for tty
     nop
-    la    $26,	  _interrupt_vector
-    la    $27,    _isr_tty_get
-    sw    $27,    12($26)           # _interrupt_vector[3] <= _isr_tty_get
+    la    $27,	_isr_tty_get
+    lw    $26, 	0($26)
+
+    li	  $26,  8
+
+    mul   $8,  
+
+    sw    $27,	12($26)           # _interrupt_vector[3] <= _isr_tty_get
 
     # initializes the ICU MASK[0] register
     la    $26,    seg_icu_base

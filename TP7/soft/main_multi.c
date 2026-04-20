@@ -5,9 +5,24 @@
 #define NPIXEL 256
 #define NLINE  256
 
+
+
 __attribute__ ((constructor)) void main() {
     int n = procid();
     tty_printf("Start Main for proc %d\n", n);
+    if (barrier_init(n, NB_PROCS) != 0) {
+       	tty_printf("Error barrier_init\n");
+	exit();
+    }
+    tty_printf("Barrier initialized\n");
+    if (barrier_wait(n) != 0) {
+	tty_printf("Error barrier_wait\n");
+	exit();
+    }
+    tty_printf("End of programm");
+    exit();
+}
+/*
     unsigned char BUF1[NPIXEL * NLINE];
     unsigned char BUF2[NPIXEL * NLINE];
 
@@ -20,6 +35,8 @@ __attribute__ ((constructor)) void main() {
     // i1 build=buf2 print=buf1 construit 2 print 1
     // ..
     // i5 build=buf2 print=buf2             print 5
+
+    barrier_init(n, NB_PROCS);
 
     for (int i = 0; i < 6; i++){
         tty_printf("--- i = %d ---\n", i);
@@ -41,8 +58,6 @@ __attribute__ ((constructor)) void main() {
         }
 
         if (i < 5){ // construction
-            if (barrier_init(n, NB_PROCS)) tty_printf("!!! error barrier init !!!\n"); // barière pour 4 processeurs, initialisation pour le proc n
-	    else tty_printf("barrier initialized\n");
             tty_printf("\n*** damier %d ***\n\n", i+1);
             for (int pixel = 0; pixel < NPIXEL; pixel += 1) {
                 for (int line = 0 ; line < NLINE ; line += 1) {
@@ -78,3 +93,4 @@ __attribute__ ((constructor)) void main() {
     tty_printf("\nFin du programme au cycle = %d\n\n", proctime());
     exit();
 } // end main
+*/
