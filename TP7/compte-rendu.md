@@ -117,8 +117,6 @@ Elle est mise à 0 dans la fonction *_isr_dma*. <!-- TODO où est déclarée _dm
 Pour passer de la période *(n)* à la période *(n+1)* il faut vérifier que la constructions et l'affichage soit finit dans les deux buffers pour ne pas avoir d'accès concurrents. Comme l'affichage est beaucoup plus rapide que la construction on doit vérifier seulement que la constructions est finie. <!-- TODO pas sur?? -->
 
 ### E2
-La durée 
-
 - Temps de construction de l'image: 3 104 741 cycles
 
 - Temps d'affichage de l'image: 6 218 657 -  6 215 105 = 3 552 cycles
@@ -158,7 +156,7 @@ L'ICU va donc rediriger cette interruption vers les processeurs concernés par l
 Ensuite cette interruption va provoquer l'appel à _giet qui va appeler _int_handler puis _int_demux.\
 Cela va appeler _isr_dma qui (dans *irq_handler.c*) qui correspond à la routine d'interruption du DMA.\
 L'isr va enregistrer dans le status du DMA dans DMA_LEN, afin de savoir si la transaction s'est terminé (=0) ou a été interrompue (>0).\
-L'isr va également mettre à 0 la variable *_dma_busy* afin de déclarer la fin de la transaction du DMA.  
+L'isr va également mettre à 0 la variable *_dma_busy* afin de déclarer la fin de la transaction du DMA.
 
 L'appel à la fonction *fb_completed()* (*drivers.c*)  permet donc d'attendre que la transaction soit finie, puis de vérifier s'il elle s'est faite jusqu'au bout (DMA_LEN = 0) ou si elle n'a pas pu se terminer correctement (DMA_LEN > 0). Cet appel permet donc de constater si le DMA a reçu un erreur du Bus.
 
@@ -171,9 +169,22 @@ Cela signifie donc que isr_dma a été appelée alors que la transaction n'étai
 
 ## G - Amélioration du parallèlisme
 
-On change le nombre de processeurs dans *config.h*.\
+- Temps de construction de l'image: 794 765 cycles, soit 3 fois plus rapide qu'avec le DMA et un processeur!
 
+- Temps d'affichage de l'image: 4 006 369 - 4 002 559 = 3 810 cycles, il reste constant car le calcul est toujours effectué en parallèle par le DMA que l'on doit attendre avant le début de chaque itération.
 
+- Temps total: 4 062 160 cycles, soit 4 fois plus rapide qu'avec le DMA et un seul processeur! Ceci est cohérent avec le fait que l'on ait découpé et parallélisé la construction de l'image en 4.
+
+Les problèmes rencontrés sont les suivants:\
+- On change le nombre de processeurs dans *config.h*.\
+- Lorsque l'on charge une adresse il faut utiliser la.\
+- Pour définir le numéro du processeur grâce à son id, on fait un "and" entre son id et 0b11 pour - retenir que les MSB.\
+- Pour chaque processeur on calcule bien l'offset correspondant dans la pile par rapport au processeur d'ID inférieur.\
+- Il faut activer SNOOP avec -SNOOP 1.\
+- Chaque processeur saute au même main, il faut donc toujours sauter à 0(seg_data_base).\
+- Une barrière a un index, chaque processeur utilisant une même barrière utilisent le même index. La barrière est initialisée une seule fois par 1 processeur.\
+- En déclarant les buffer en dehors du main, ils deviennent des variables globales qui ne sont pas situées sur la pile. Ils sont donc partagés par tous les processeurs.\
+- Il faut activer le mask du DMA que pour le processeur 0, et faire l'affichage uniquement avec le processeur 0! 
 
 <!-- TODO ACTIVER -SNOOP 1!!! -->
 <!-- TODO ACTIVER -SNOOP 1!!! -->
