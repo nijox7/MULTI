@@ -26,7 +26,7 @@ reset:
     # initializes interrupt vector for dma
     la    $26,    _interrupt_vector
     la    $27,    _isr_dma
-    sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
+    sw    $27,    0($26)         # _interrupt_vector[0] <= _isr_dma
 
     mfc0  $27,    $15,    1      # get the processor id
     andi  $27,    0b11       	 # no more than 4 processors
