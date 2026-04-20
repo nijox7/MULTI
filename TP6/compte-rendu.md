@@ -132,6 +132,7 @@ L'adresse de main_pgcd() est 0x004013fc.
 
 ### D3
 On force GCC à construire la table de saut au début du segment data en le spécifiant dans le fichier *app.ld* qui va spécifier au linker la construction de cette table. C'est la ligne "*(.ctors)" qui permet de dire au linker que l'on veut mettre tous les constructeurs au début du segment seg_data.\
+On déclare également main comme constructor avec la syntaxe *__attribute__((constructor)) main*.
 (vu dans app.ld)
 
 ### D4
