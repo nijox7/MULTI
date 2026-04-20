@@ -61,7 +61,7 @@ proc0:
 
     # jump to main in user mode
     la    $26,    seg_data_base
-    lw    $26,    0($26)            # $26 <= main[0]
+    lw    $26,    0($26)            # $26 <= main
     mtc0  $26,    $14               # write it in EPC register
     eret
 
@@ -88,9 +88,9 @@ proc1:
     li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
     mtc0  $26,  $12             # SR <= 0x0000FF13
 
-    # jump to main in user mode: main[1]
+    # jump to main in user mode: main
     la    $26,    seg_data_base
-    lw    $26,    4($26)         # $26 <= main[1], chaque adresse est sur 4 octet donc on fait 4($26)
+    lw    $26,    0($26)         # $26 <= main
     mtc0  $26,    $14            # write it in EPC register
     eret
 
@@ -115,9 +115,9 @@ proc2:
     li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
     mtc0  $26,  $12             # SR <= 0x0000FF13
 
-    # jump to main in user mode: main[2]
+    # jump to main in user mode: main
     la    $26,    seg_data_base
-    lw    $26,    8($26)         # $26 <= main[2]
+    lw    $26,    0($26)         # $26 <= main
     mtc0  $26,    $14            # write it in EPC register
     eret
 
@@ -142,9 +142,9 @@ proc3:
     li    $26,  0xFF13      	# user mode, exception level = 1, irq mask = FF, irq enable
     mtc0  $26,  $12             # SR <= 0xFF13
 
-    # jump to main in user mode: main[3]
+    # jump to main in user mode: main
     la    $26,    seg_data_base
-    lw    $26,    12($26)       # $26 <= main[3]
+    lw    $26,    0($26)       # $26 <= main
     mtc0  $26,    $14           # write it in EPC register
     eret
 

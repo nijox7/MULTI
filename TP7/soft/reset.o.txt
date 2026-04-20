@@ -71,13 +71,13 @@ Disassembly of section .reset:
   b0:	af5b0008 	sw	k1,8(k0)
   b4:	3c1d0000 	lui	sp,0x0
   b8:	27bd0000 	addiu	sp,sp,0
-  bc:	3c1a0040 	lui	k0,0x40
+  bc:	3c1a0008 	lui	k0,0x8
   c0:	03bae820 	add	sp,sp,k0
   c4:	341aff13 	li	k0,0xff13
   c8:	409a6000 	mtc0	k0,c0_status
   cc:	3c1a0000 	lui	k0,0x0
   d0:	275a0000 	addiu	k0,k0,0
-  d4:	8f5a0004 	lw	k0,4(k0)
+  d4:	8f5a0000 	lw	k0,0(k0)
   d8:	409a7000 	mtc0	k0,c0_epc
   dc:	42000018 	eret
 
@@ -100,7 +100,7 @@ Disassembly of section .reset:
  11c:	409a6000 	mtc0	k0,c0_status
  120:	3c1a0000 	lui	k0,0x0
  124:	275a0000 	addiu	k0,k0,0
- 128:	8f5a0008 	lw	k0,8(k0)
+ 128:	8f5a0000 	lw	k0,0(k0)
  12c:	409a7000 	mtc0	k0,c0_epc
  130:	42000018 	eret
 
@@ -123,7 +123,7 @@ Disassembly of section .reset:
  170:	409a6000 	mtc0	k0,c0_status
  174:	3c1a0000 	lui	k0,0x0
  178:	275a0000 	addiu	k0,k0,0
- 17c:	8f5a000c 	lw	k0,12(k0)
+ 17c:	8f5a0000 	lw	k0,0(k0)
  180:	409a7000 	mtc0	k0,c0_epc
  184:	42000018 	eret
 
