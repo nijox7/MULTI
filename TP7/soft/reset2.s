@@ -23,138 +23,67 @@
 reset:
     .set noreorder
 
-    la 	  $26,  _interrupt_vector
+    mfc0  $26,	$15,    1	    # get processer id
+    la 	  $27,  _interrupt_vector   # get interrupt_vector adress
 
-    mfc0  $27,	$15,	1	# get processer id
-    andi  $27,  $27,	0	# keep LSB(0)
-    bne	  $27, 	$0,	proc
-
-    # initialises interrupt vector for dma
-    la    $27, 	_isr_dma
-    sw    $27,	0($26)        	# _interrupt_vector[0] <= _isr_dma
+    andi  $8,   $26,	1	    # keep LSB(0) of procid
+    bne	  $8, 	$0,	    proc
+    # initializes interrupt vector for dma
+    la    $9, 	_isr_dma
+    sw    $9,	0($27)        	# _interrupt_vector[0] <= _isr_dma
 
 proc:
-    # initialises interrupt vector for tty
-    nop
-    la    $27,	_isr_tty_get
-    lw    $26, 	0($26)
+    ;;; --- initializes interrupt vector for tty --- ;;;
+    la    $8,	_isr_tty_get
+    lw    $9, 	12($27)         # _interrupt_vector tty
+    li    $10,  8
+    mult  $10,  $26             # 8 * procid
+    mflo  $10
+    addiu $27,  $27,    $10     # _interrupt_vector + 12 + 8*procid
+    sw    $8,	0($27)            # _interrupt_vector[tty_id] <= _isr_tty_get
 
-    li	  $26,  8
 
-    mul   $8,  
+    ;;; --- initializes the ICU MASK register--- ;;;
+    la    $27,    seg_icu_base
 
-    sw    $27,	12($26)           # _interrupt_vector[3] <= _isr_tty_get
+    # calculating ICU[procid]
+    li    $8,   0x20
+    mult  $8,   $26
+    mflo  $8
+    addi  $27,  $27,    $8  # $27 <= ICU[procid]
 
-    # initializes the ICU MASK[0] register
-    la    $26,    seg_icu_base
-    addiu $26,    $26,    0         # ICU[0]
-    li    $27,    0b00001001        # IRQ_DMA[0] & IRQ_TTY[0]
-    sw    $27,    8($26)
+    # calculating MASK[tty] and MASK[dma]
+    li    $8,   1
+    li    $9,   2
+    mult  $9,   $26
+    mflo  $9                # procid * 2
+    sll   $8,   3           # MASK[3]
+    sllv  $8,   $9          # MASK[3 + 2*procid]
+    addiu $8,   $8,     1   # MASK[0]
+     
+    sw    $8,    8($27)     # ICU[PROCID] <= MASK
 
-    # initializes stack pointer
+
+    ;;; --- initializes stack pointer --- ;;;
     la    $29,    seg_stack_base
-    li    $26,    0x40000           # stack size = 256K
-    addu  $29,    $29,    $26       # seg_stack_base + 256K
+    li    $27,    0x40000           # stack size = 256K
+    mult  $27,    $26               # 256K * procid
+    mflo  $27
+    addu  $29,    $29,    $26       # seg_stack_base + 256K*procid
 
-    # initializes SR register
-    li    $26,    0x0000FF13
-    mtc0  $26,    $12               # SR <= 0x0000FF13
 
-    # jump to main in user mode
-    la    $26,    seg_data_base
-    lw    $26,    0($26)            # $26 <= main
-    mtc0  $26,    $14               # write it in EPC register
+    ;;; --- initializes SR register --- ;;;
+    li    $27,    0x0000FF13
+    mtc0  $27,    $12               # SR <= 0x0000FF13
+
+
+    ;;; --- jump to main in user mode --- ;;;
+    la    $27,    seg_data_base
+    lw    $27,    0($27)            # $26 <= main
+    mtc0  $27,    $14               # write it in EPC register
     eret
 
     .set reorder
-
-proc1:
-    # initialises interrupt vector for tty
-    la    $26,	  _interrupt_vector
-    la    $27,    _isr_tty_get
-    sw    $27,    20($26)           # _interrupt_vector[5] <= _isr_tty_get
-
-    # initializes the ICU[1] MASK register
-    la      $26,    seg_icu_base
-    addi    $26,    $26,    0x20  # ICU[1]
-    li      $27,    0b00100001    # IRQ_DMA[0] & IRQ_TTY[1]
-    sw      $27,    8($26)
-
-    # initializes stack pointer for PROC[1]
-    la      $29,    seg_stack_base
-    li      $26,    0x80000
-    add     $29,    $29,   $26  # $29 <= seg_stack_base + 2*256K
-
-    # initializes Status Register for PROC[1]
-    li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
-    mtc0  $26,  $12             # SR <= 0x0000FF13
-
-    # jump to main in user mode: main
-    la    $26,    seg_data_base
-    lw    $26,    0($26)         # $26 <= main
-    mtc0  $26,    $14            # write it in EPC register
-    eret
-
-proc2:
-    # initializes interrupt vector for tty
-    la    $26,	  _interrupt_vector
-    la    $27,    _isr_tty_get
-    sw    $27,    28($26)          # _interrupt_vector[7] <= _isr_tty_get
-
-    # initializes the ICU[2] MASK register
-    la      $26,    seg_icu_base
-    addi    $26,    $26,    0x40  # ICU[2]
-    li      $27,    0b10000001    # IRQ_DMA[0] & IRQ_TTY[2]
-    sw      $27,    8($26)
-
-    # initializes stack pointer for PROC[2]
-    la      $29,    seg_stack_base
-    li      $26,    0xC0000
-    add     $29,    $29,  $26	# seg_stack_base + 3*256K
-
-    # initializes Status Register for PROC[2]
-    li    $26,  0x0000FF13      # user mode, exception level = 1, irq mask = FF, irq enable
-    mtc0  $26,  $12             # SR <= 0x0000FF13
-
-    # jump to main in user mode: main
-    la    $26,    seg_data_base
-    lw    $26,    0($26)         # $26 <= main
-    mtc0  $26,    $14            # write it in EPC register
-    eret
-
-proc3:
-    # initializes interrupt vector for tty
-    la    $26,	  _interrupt_vector
-    la    $27,    _isr_tty_get
-    sw    $27,    36($26)           # _interrupt_vector[9] <= _isr_tty_get
-
-    # initializes the ICU[1] MASK register
-    la      $26,    seg_icu_base
-    addi    $26,    $26,    0x60  # ICU[3]
-    li      $27,    0b1000000001  # IRQ_DMA[0] & IRQ_TTY[3]
-    sw      $27,    8($26)
-
-    # intitializes stack pointer for PROC[3]
-    la    $29,	seg_stack_base
-    li    $26,  0x100000
-    add   $29,  $29,  $26 	# seg_stack_base + 4*256k
-
-    # initializes Status Register for PROC[3]
-    li    $26,  0xFF13      	# user mode, exception level = 1, irq mask = FF, irq enable
-    mtc0  $26,  $12             # SR <= 0xFF13
-
-    # jump to main in user mode: main
-    la    $26,    seg_data_base
-    lw    $26,    0($26)       # $26 <= main
-    mtc0  $26,    $14           # write it in EPC register
-    eret
-
-
-    .set reorder
-
-rien:
 
 .endfunc
 .size    reset, .-reset
-
-

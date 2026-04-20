@@ -23,7 +23,7 @@
 reset:
     .set noreorder
 
-    # initialises interrupt vector for dma
+    # initializes interrupt vector for dma
     la    $26,    _interrupt_vector
     la    $27,    _isr_dma
     sw    $27,    0($26)            # _interrupt_vector[0] <= _isr_dma
