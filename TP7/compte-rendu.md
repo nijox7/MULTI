@@ -45,7 +45,7 @@ Sinon Target peut dire à Master de faire un transfert en mettant *r_stop* à 0.
 
 ### B5
 
-<!-- TODO mettre automate -->
+!["A"](automate.jpg "MASTER_FSM PibusDma")
 
 
 ## C - Architecture matérielle
@@ -53,7 +53,8 @@ Sinon Target peut dire à Master de faire un transfert en mettant *r_stop* à 0.
 ### C1
 La longueur d'une rafale en mots de 32 bits est de 16.\
 L'avantage d'utiliser des grosses rafales est le nombre de cycles économisés par la réduction du nombre de requête au bus ainsi que les cycles servant à initier la transaction et la terminer.\
-La conséquence de l'augmentation de la longueur de la rafale sur le matériel est <!-- TODO je ne sais pas??? Peut-être l'arbitre de bus mais c'est logiciel?? TIMEOUT??-->
+<!--La conséquence de l'augmentation de la longueur de la rafale sur le matériel est--> 
+<!-- TODO je ne sais pas??? Peut-être l'arbitre de bus mais c'est logiciel?? TIMEOUT??-->
 
 ### C2
 L'adresse de base du composant DMA est 0x93000000.
@@ -82,7 +83,7 @@ Avec l'appel memcpy:
 
 - Temps d'affichage de l'image: 2 870 879 - 2 432 848 = 438 031 cycles
 
-### D3
+### D3
 *fb_sync_write* fait appel à la fonction memcpy, qui s'éxecute sur le processeur, pour copier une zone mémoire utilisateur vers une destination donnée.
 
 *fb_write* configure les registre du composant DMA pour qu'il transfère la mémoire à la manière de memcpy mais avec des transactions en rafales et en parallèle du processeur.
@@ -185,7 +186,3 @@ Les problèmes rencontrés sont les suivants:\
 - Une barrière a un index, chaque processeur utilisant une même barrière utilisent le même index. La barrière est initialisée une seule fois par 1 processeur.\
 - En déclarant les buffer en dehors du main, ils deviennent des variables globales qui ne sont pas situées sur la pile. Ils sont donc partagés par tous les processeurs.\
 - Il faut activer le mask du DMA que pour le processeur 0, et faire l'affichage uniquement avec le processeur 0! 
-
-<!-- TODO ACTIVER -SNOOP 1!!! -->
-<!-- TODO ACTIVER -SNOOP 1!!! -->
-<!-- TODO ACTIVER -SNOOP 1!!! -->

@@ -53,14 +53,13 @@ proc:
     mflo  $8
     add   $27,  $27,    $8  # $27 <= ICU[procid]
 
-    # calculating MASK[tty] and MASK[dma]
+    # calculating MASK[tty]
     li    $8,   1
     li    $9,   2
     mult  $9,   $26
     mflo  $9                # procid * 2
     sll   $8,   3           # MASK[3]
     sllv  $8,   $8,     $9  # MASK[3 + 2*procid]
-    addiu $8,   $8,     1   # MASK[0]
     sw    $8,    8($27)     # ICU[PROCID] <= MASK
 
 
