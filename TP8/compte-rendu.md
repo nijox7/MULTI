@@ -87,3 +87,18 @@ Le composant ICU reçoit un total de 2 + 2*nbprocs lignes d'interruptions entran
 Le nombre de lignes d'interruptions sortantes est égal au nombre de coeurs.\
 
 Les IRQs provenant des périphériques sont connectés au comosant ICU à l'aide des signaux *signal_irq_dma*, *signal_irq_ioc*, *signal_irq_tim* et *signal_irq_tty_get*.
+
+
+## D - Code de boot
+
+### D1
+Le pointeur de pile dépend du numéro de processeur car chaque processeur possède sa propre pile afin d'assurer la cohérence mémoire au sein d'un même programme.
+
+### D2
+Afin de router les lignes d'interruptions du composant ICU vers les différents processeurs, on configure un mask pour chaque processeur permettant de filtrer les interruptions qui intéresse chaque processeur.
+
+### D3
+- Proc 0: 0b 0000 0000 1111
+- Proc 1: 0b 0000 0011 0000
+- Proc 2: 0b 0000 1100 0000
+- Proc 3: 0b 0011 0000 0000
