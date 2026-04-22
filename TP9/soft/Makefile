@@ -13,7 +13,8 @@ SYS_OBJS=reset.o \
          irq_handler.o \
          exc_handler.o 
 
-APP_OBJS=stdio.o main_bipro.o
+MAIN=main_fifo
+APP_OBJS=stdio.o $(MAIN).o
 
 GIET_SYS_PATH=/users/enseig/alain/giet_2011/sys
 GIET_APP_PATH=/users/enseig/alain/giet_2011/app
@@ -72,7 +73,7 @@ stdio.o: $(GIET_APP_PATH)/stdio.c $(GIET_APP_PATH)/stdio.h
 	$(CC) $(CFLAGS) -I$(GIET_APP_PATH) -I. -c -o $@ $<
 	$(DU) -D $@ > $@.txt
 
-main_bipro.o: main_bipro.c 
+$(MAIN).o: $(MAIN).c 
 	$(CC) $(CFLAGS) -I$(GIET_APP_PATH) -I. -c -o $@ $<
 	$(DU) -D $@ > $@.txt
 
