@@ -122,3 +122,88 @@ L'appel système *ioc_completed()* ne prend pas d'arguments et attend que la var
 Ensuite il met les variables *ioc_lock* et *ioc_done* à 0.
 
 ### E3
+Lors de la simulation, si on met l'option -SNOOP 0, seule la première image reste affichée malgré que l'on passe à l'image suivante.\
+Ceci est du au cache de donné qui pense que l'image est à jour alors qu'elle a été modifiée par le composant IOC. La première itération, le cache ne fait pas de HIT donc lit la mémoire en RAM, mais les suivantes le cache fait HIT et il n'y a plus de lecture en RAM pour mettre à jour *buf_in*. Le résultat affiché ne change donc pas.\
+
+L'attribut volatile ne règle pas le problème car il n'a pas d'effet sur la décision du cache mais sur le stockage d'un variable dans un registre du processeur. Même si l'on force l'accès mémoire avec l'attribut volatile, on fera toujours un HIT sur le cache ce qui empêchera de récupérer la bonne valeur.
+
+### E4
+Les confitions qui font sortir l'automate SNOOP_FSM de l'état IDLE sont la détection de 3 type d'écritures externes:
+
+- L'écriture externe a matché avec une ligne de cache local.
+- L'écriture externe a matché avec une ligne de cache demandée.
+- L'écriture externe a matché avec un envoie d'adresse avec llsc.
+
+La stratégie mise en oeuvre en cas de hit externe est une invalidation de la ligne de cache concernée.
+
+### E5
+La détection de plusieurs hit externes consécutifs psoe problème car l'invalidation en cours n'a pas été finialisée.\
+Cela provoque le passage du Snoop_fsm en mode panique et va invalider tout le DCACHE. <!-- TODO si mieux compris réexpliquer? -->
+
+### E6
+|       | Chargement | Seuillage    | Affichage | 
+|:----  |:----------:|:------------:|:---------:|
+|Image 1| 41 813     | 553 913      | 112 247   |
+|Image 2| 40 651     | 554 129      | 112 083   |
+|Image 3| 40 705     | 554 129      | 112 083   |
+|Image 4| 40 705     | 554 129      | 112 083   |
+
+<!--
+*** image 0 au cycle : 1138 *** 
+image chargee au cycle 42951 
+filtrage termine au cycle 596864 
+image affichee au cycle 709111
+
+*** image 1 au cycle : 11634456 *** 
+image chargee au cycle 11675107 
+filtrage termine au cycle = 12229236
+image affichee au cycle = 12341319
+
+****image 2 au cycle 19428681 ***
+image chargee au cycle 19469386
+filtrage termine au cycle = 20023515
+image affichee au cycle 20135598
+
+*** image 3 au cycle : 20964962 ***
+image chargee au cycle 21005667
+filtrage termine au cycle 21559796
+image affichee au cycle 21671879
+-->
+
+
+## F - Exécution sur architecture multi-processeurs
+
+### F1
+Question F1 : Sur les trois phases de traitement (chargement, filtrage, affichage), lesquelles vont effectivement pouvoir être parallélisées ?
+
+La seule phase qui va être parallélisée est la phase de filtrage qui est découpée entre les 4 processeurs.\
+La phase d'affichage et de lecture dans le disque ne sont pas paralléliser car elle ne permettent qu'un transfert en même temps.
+
+<!--
+La phase d'affichage et la phase de filtrage peuvent être parallèliser à la manière dont on avait parallélisée la phase de construction et d'affichage de l'image dans le TP7. (Avec le DMA en parallèle de la construction de l'image suivante)\
+
+Pour paralléliser la phase de lecture de l'image en pipeline logiciel, il faudrait un 3ème buffer car sinon on la construction lirait le buffer in et la lecutre écrirait dans ce même buffer en même temps.\ Donc cette phase ne peut être paralléliser de cette manière.
+-->
+
+### F2
+Le mécanisme général permettant de séquentialiser les 4 transferts demandés par les 4 processeurs est le suivant:
+
+Chaque processeur fait sa propre demande de lecture dans le disque, l'écrit dans son buffer de sortie puis fais sa propre demande d'écriture sur le FrameBuffer.\
+Le filtrage de l'image est donc indépendant des autres processeurs, mais les étapes de lecture et d'affichage de l'image forceront les processeurs à s'attendre entre eux.
+
+<!--
+Pour séquentialiser les 4 transferts demandés par les 4 processeurs on peut suivre ce chronogramme:
+
+|      | Itération 1    | Itération 2     | Itération 3     |  Itération 4    | Itération 5    |
+|:---- |:-----------   :|:------------:   |:-----------:    |:------------:   |:-----------:   |
+|Proc 0| Lecture 0, Construction 0 | Lecture 1, Construction 1, Affichage 0 | Lecture 2, Construction 2, Affichage 1  | Lecture 3, Construction 3, Affichage 2  |                |
+|Proc 1| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
+|Proc 2| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
+|Proc 3| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
+-->
+
+### F3
+*_ioc_get_lock* permet d'attendre que la variable *_ioc_lock* passe à 0 puis la remet à 1 pour que l'appelant de l'appel système puisse utiliser l'IOC.
+
+### F4
+La fonction système qui libère ce verrou est la fonction *_ioc_completed* qui doit être appelé par l'utilisateur ayant fait un appel à la fonction *_ioc_read* ou *_ioc_write* afin de libérer l'IOC.
