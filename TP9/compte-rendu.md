@@ -2,7 +2,7 @@
 
 ## Notes
 
-## C - Application producteur / consommateur
+## C - Application producteur / consommateur
 
 ### C1
 Sur le terminal TTY[0] on devrait voir les messages:\
@@ -42,3 +42,30 @@ Il n'y a pas de risque d'incohérence liée aux accès concurrents à la variabl
 <!-- TODO peut-être il y a une meilleure raison jsp -->
 
 ### D2
+Avec synchronisation:
+- 530 236 cycles, PRODUCER_DELAY=100, CONSUMER_DELAY=100
+- 476 290 cycles, PRODUCER_DELAY=10, CONSUMER_DELAY=100
+- 476 245 cycles, PRODUCER_DELAY=100, CONSUMER_DELAY=10
+
+Sans synchronisation: 
+- 272 833 cycles, PRODUCER_DELAY=100, CONSUMER_DELAY=100
+
+### D3
+La cachabilité des variables *sync* et *buf* introduit un risque de dysfonctionnement car si par exemple PROC0 LIT sync et l'enregistre dans son cache, si PROC1 écrit sync, PROC0 lors de sa prochaine lecture fera un HIT sur le cache et PROC0 ne verra pas la nouvelle valeur écrite par PROC1.\
+Il faut donc activer le mécanisme de SNOOP afin d'invalider les lignes de caches incohérentes.
+
+### D4
+En désactivant le mécanisme de Snoop, comme le processeur 0 a enregistré la première valeur de Snoop lue dans son cache, celui-ci attend qu'elle passe à 1 mais ce ne sera jamais le cas car une lecture sera suivie d'un HIT sur le cache, empêchant de voir la nouvelle valeur de *sync* écrite par le processeur 1.\
+En l'occurence le processeur 1 ne pourra même pas modifier la variable *sync* car il attend que le processeur 0 la modifie, mais le même problème de cache est présent dans le processeur 1.\
+Désactiver le mécanisme de Snoop met donc les deux programmes dans une boucle infinie.
+
+### D5
+Le coût matériel d'un mécanisme comme Snoop est qu'il doit constamment vérifier les lignes de caches, il doit donc être relié à chaque cache de chaque processeur.
+
+
+## E - Problèmes de synchronisation liés au réordonnancement des instructions
+
+### E1
+Pour assurer l'odre d'exécution des instruction, on place l'appel *__sync_synchronize()* juste après l'écriture de BUF et de val.
+
+### E2

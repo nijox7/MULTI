@@ -40,6 +40,7 @@ __attribute ((constructor)) void producer() {
             asm volatile ("");
         }
         BUF = n;
+        __sync_synchronize(); // on force l'écriture de BUF pour assurer l'ordre d'exécution
         tty_printf("transmitted value : %d     temporisation = %d\n", n, tempo);
         sync = 1; // met sync à 1 pour débloquer le consumer (une valeur peut être lue dans BUF)
     }
@@ -62,6 +63,7 @@ __attribute ((constructor)) void consumer() {
             asm volatile ("");
         }
         val = BUF;
+        __sync_synchronize(); // on force l'écriture de val pour assurer l'ordre d'exécution
         tty_printf("received value : %d     temporisation = %d\n", val, tempo);
         sync = 0; // met sync à 0 pour débloquer le producer (BUF a été lu par consumer)
     }
