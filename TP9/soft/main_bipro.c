@@ -25,6 +25,7 @@
 #define CONSUMER_DELAY 100
 
 volatile int BUF = 0;
+volatile int sync = 0;
 
 
 __attribute ((constructor)) void producer() {
@@ -33,12 +34,14 @@ __attribute ((constructor)) void producer() {
 
     tty_printf("*** Starting task producer on processor %d ***\n\n", procid());
 
-    for (int n = 0; n < NMAX; n += 1) { 
+    for (int n = 0; n < NMAX; n += 1) {
+        while(sync != 0) {} // attend que le consumer ait lu la variable BUF
         for (int x = 0; x < tempo; x += 1) {
             asm volatile ("");
         }
         BUF = n;
         tty_printf("transmitted value : %d     temporisation = %d\n", n, tempo);
+        sync = 1; // met sync à 1 pour débloquer le consumer (une valeur peut être lue dans BUF)
     }
 
     tty_printf("\n*** Completing producer at cycle %d ***\n", proctime());
@@ -53,12 +56,14 @@ __attribute ((constructor)) void consumer() {
 
     tty_printf("*** Starting task consumer on processor %d ***\n\n", procid());
 
-    for (int n = 0; n < NMAX; n += 1) { 
+    for (int n = 0; n < NMAX; n += 1) {
+        while(sync != 1) {} // attend que le producer ait écrit une valeur dans BUF
         for (int x = 0; x < tempo; x += 1) {
             asm volatile ("");
         }
         val = BUF;
         tty_printf("received value : %d     temporisation = %d\n", val, tempo);
+        sync = 0; // met sync à 0 pour débloquer le producer (BUF a été lu par consumer)
     }
 
     tty_printf("\n*** Completing consumer at cycle %d ***\n", proctime());
