@@ -203,7 +203,8 @@ Pour séquentialiser les 4 transferts demandés par les 4 processeurs on peut su
 -->
 
 ### F3
-*_ioc_get_lock* permet d'attendre que la variable *_ioc_lock* passe à 0 puis la remet à 1 pour que l'appelant de l'appel système puisse utiliser l'IOC.
+*_ioc_get_lock* permet d'attendre que la variable *_ioc_lock* passe à 0 puis la remet à 1 pour que l'appelant de l'appel système puisse utiliser l'IOC.\
+Elle permet donc de prendre le verrour sur l'IOC.
 
 ### F4
-La fonction système qui libère ce verrou est la fonction *_ioc_completed* qui doit être appelé par l'utilisateur ayant fait un appel à la fonction *_ioc_read* ou *_ioc_write* afin de libérer l'IOC.
+La fonction système qui libère ce verrou est la fonction *_ioc_completed* qui doit être appelé par l'utilisateur ayant fait un appel à la fonction *_ioc_read* ou *_ioc_write* afin de libérer l'IOC (*_ioc_lock* = 0).

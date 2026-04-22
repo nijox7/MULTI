@@ -39,7 +39,7 @@ __attribute__ ((constructor)) void main() {
         tty_printf("\n *** image %d au cycle : %d *** \n", image, proctime());
 
         /* Phase 1 : lecture image sur le disque et transfert vers buf_in */
-        if (ioc_read(nblocks * nprocs * image + pid * npixels, buf_in + (pid * npixels), nblocks)) {
+        if (ioc_read(nblocks*nprocs*image + pid*nblocks, buf_in + (pid*npixels), nblocks)) {
             tty_printf("\n!!! echec ioc_read au cycle : %d !!!\n", proctime()); 
             exit();
         }
@@ -63,7 +63,7 @@ __attribute__ ((constructor)) void main() {
 
 
         /* Phase 3 : transfert de buf_out vers le frame buffer */
-        if (fb_sync_write(npixels * pid, buf_out, npixels)) { 
+        if (fb_sync_write(npixels*pid, buf_out + npixels*pid, npixels)) { 
             tty_printf("\n!!! echec fb_write au cycle : %d !!!\n", proctime()); 
             exit();
         }
