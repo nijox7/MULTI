@@ -81,7 +81,7 @@ void fifo_write(fifo_t * fifo, int * val) {
         }
         else {
             fifo->buf[fifo->ptw] = *val; // écrit la valeur dans la fifo
-            fifo->ptw = (fifo->ptw + 1) % (fifo->depth + 1); // incrémente le pointeur d'écriture
+            fifo->ptw = (fifo->ptw + 1) % fifo->depth; // incrémente le pointeur d'écriture
             fifo->sts += 1; // met à jour le nombre de données
             lock_release((lock_t *) (&fifo->lock)); // relâche le verrou
             done = 1; // le transfert est terminé
