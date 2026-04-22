@@ -43,7 +43,7 @@ __attribute ((constructor)) void producer() {
         __sync_synchronize(); // on force l'écriture de BUF pour assurer l'ordre d'exécution
         tty_printf("transmitted value : %d     temporisation = %d\n", n, tempo);
         sync = 1; // met sync à 1 pour débloquer le consumer (une valeur peut être lue dans BUF)
-        __sync_synchronize(); // on force l'écriture de val pour assurer l'ordre d'exécution
+        __sync_synchronize(); // on force l'écriture de sync pour assurer l'ordre d'exécution
     }
 
     tty_printf("\n*** Completing producer at cycle %d ***\n", proctime());
@@ -67,7 +67,7 @@ __attribute ((constructor)) void consumer() {
         __sync_synchronize(); // on force l'écriture de val pour assurer l'ordre d'exécution
         tty_printf("received value : %d     temporisation = %d\n", val, tempo);
         sync = 0; // met sync à 0 pour débloquer le producer (BUF a été lu par consumer)
-        __sync_synchronize(); // on force l'écriture de val pour assurer l'ordre d'exécution
+        __sync_synchronize(); // on force l'écriture de sync pour assurer l'ordre d'exécution
     }
 
     tty_printf("\n*** Completing consumer at cycle %d ***\n", proctime());
