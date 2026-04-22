@@ -80,6 +80,7 @@ void fifo_write(fifo_t * fifo, int * val) {
             lock_release((lock_t *) (&fifo->lock));
         }
         else {
+            __sync_synchronize();
             fifo->buf[fifo->ptw] = *val; // écrit la valeur dans la fifo
             __sync_synchronize();
             fifo->ptw = (fifo->ptw + 1) % fifo->depth; // incrémente le pointeur d'écriture
@@ -105,6 +106,7 @@ void fifo_read(fifo_t * fifo, int * val) {
             lock_release((lock_t *) (&fifo->lock));
         }
         else {
+            __sync_synchronize();
             *val = fifo->buf[fifo->ptr]; // lit la donnée
             __sync_synchronize();
             if (fifo->ptr > 0) fifo->ptr -= 1; // met à jour le pointeur de lecture
