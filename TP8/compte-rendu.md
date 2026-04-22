@@ -174,16 +174,8 @@ image affichee au cycle 21671879
 ## F - Exécution sur architecture multi-processeurs
 
 ### F1
-Question F1 : Sur les trois phases de traitement (chargement, filtrage, affichage), lesquelles vont effectivement pouvoir être parallélisées ?
-
 La seule phase qui va être parallélisée est la phase de filtrage qui est découpée entre les 4 processeurs.\
 La phase d'affichage et de lecture dans le disque ne sont pas paralléliser car elle ne permettent qu'un transfert en même temps.
-
-<!--
-La phase d'affichage et la phase de filtrage peuvent être parallèliser à la manière dont on avait parallélisée la phase de construction et d'affichage de l'image dans le TP7. (Avec le DMA en parallèle de la construction de l'image suivante)\
-
-Pour paralléliser la phase de lecture de l'image en pipeline logiciel, il faudrait un 3ème buffer car sinon on la construction lirait le buffer in et la lecutre écrirait dans ce même buffer en même temps.\ Donc cette phase ne peut être paralléliser de cette manière.
--->
 
 ### F2
 Le mécanisme général permettant de séquentialiser les 4 transferts demandés par les 4 processeurs est le suivant:
@@ -191,20 +183,27 @@ Le mécanisme général permettant de séquentialiser les 4 transferts demandés
 Chaque processeur fait sa propre demande de lecture dans le disque, l'écrit dans son buffer de sortie puis fais sa propre demande d'écriture sur le FrameBuffer.\
 Le filtrage de l'image est donc indépendant des autres processeurs, mais les étapes de lecture et d'affichage de l'image forceront les processeurs à s'attendre entre eux.
 
-<!--
-Pour séquentialiser les 4 transferts demandés par les 4 processeurs on peut suivre ce chronogramme:
-
-|      | Itération 1    | Itération 2     | Itération 3     |  Itération 4    | Itération 5    |
-|:---- |:-----------   :|:------------:   |:-----------:    |:------------:   |:-----------:   |
-|Proc 0| Lecture 0, Construction 0 | Lecture 1, Construction 1, Affichage 0 | Lecture 2, Construction 2, Affichage 1  | Lecture 3, Construction 3, Affichage 2  |                |
-|Proc 1| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
-|Proc 2| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
-|Proc 3| Construction 0 | Construction 1  | Construction 2  | Construction 3  |                |
--->
-
 ### F3
 *_ioc_get_lock* permet d'attendre que la variable *_ioc_lock* passe à 0 puis la remet à 1 pour que l'appelant de l'appel système puisse utiliser l'IOC.\
 Elle permet donc de prendre le verrour sur l'IOC.
 
 ### F4
-La fonction système qui libère ce verrou est la fonction *_ioc_completed* qui doit être appelé par l'utilisateur ayant fait un appel à la fonction *_ioc_read* ou *_ioc_write* afin de libérer l'IOC (*_ioc_lock* = 0).
+La fonction système qui libère ce verrou est la fonction *_ioc_completed* qui doit être appelé par l'utilisateur ayant fait un appel à la fonction *_ioc_read* ou *_ioc_write* afin de libérer le verrou du commposant IOC (*_ioc_lock* = 0).\
+
+
+## G - Réalisation matérielle du LL/SC
+
+### G1
+On réalise l'enregistrement d'une adresse réservée par l'instruction LL plutôt du côté processeur que dans la mémoire car cela permet d'avoirpour chaque processeur 1 registre de réservation d'adresse qui peut être vérifier par le mécanisme de Snoop.
+
+### G2
+Dans un scénario où deux processeur P0 et P1 réserve une même adresse X et que le processeur P1 éxecute une instruction SC en premier, le processeur P0 sera informé de l'invalidation de sa réservation lorsqu'il éxecutera SC qui renverra la valeur 0 et sa ligne de cache correspondant à l'adresse X sera invalidée.\
+Le processeur devra recommencer la réservation jusqu'à ce que l'appel à SC renvoie 1.
+
+### G3
+Si on effectue une simulation en enlevant le mécanisme de SNOOP (-SNOOP 0), il manque la deuxième bande de l'image et elle reste figée malgré que l'on entre un caractère.\
+Ceci s'explique par le fait que les lignes de caches correspondant au buffer *buf_in* n'ont pas été invalidées par le mécanisme de Snoop, le processeur considère donc le buffer comme à jour alors qu'il a été modifié par le composant IOC.
+
+### G4
+Dans ce TP, on a mis en évidence l'utilisation du mécanisme de Snoop dans le partage d'un même composant par plusieurs processeurs à l'aide d'un verrou ainsi que la cohérence mémoire entre les processeurs qui doit être respectée.\
+Le mécanisme de Snoop permet donc d'assurer une cohérence mémoire qui est nécessaire au partage des ressources dans un système multi-processeurs.
