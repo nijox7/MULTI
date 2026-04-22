@@ -6,7 +6,7 @@
 // Nombre de lignes par image
 #define NB_LINES  128
 
-// Nombre de bytes par bloc du contrôleur de disque
+// Nombre de bytes par bloc du contrï¿½leur de disque
 #define BLOCK_SIZE 512
 
 // Valeur du seuil
@@ -23,7 +23,7 @@ __attribute__ ((constructor)) void main() {
     int nblocks; // number of blocks per processor
 
     if ((nprocs != 1) && (nprocs != 2) && (nprocs != 4)) {
-        tty_printf("Le nombre de processeurs doit être egal a  1, 2, 4\n");
+        tty_printf("Le nombre de processeurs doit ï¿½tre egal a  1, 2, 4\n");
         exit();
     }
 
@@ -39,7 +39,7 @@ __attribute__ ((constructor)) void main() {
         tty_printf("\n *** image %d au cycle : %d *** \n", image, proctime());
 
         /* Phase 1 : lecture image sur le disque et transfert vers buf_in */
-        if (ioc_read(TO BE COMPLETED)) {
+        if (ioc_read(32*image, buf_in, 32)) {
             tty_printf("\n!!! echec ioc_read au cycle : %d !!!\n", proctime()); 
             exit();
         }
@@ -63,7 +63,7 @@ __attribute__ ((constructor)) void main() {
 
 
         /* Phase 3 : transfert de buf_out vers le frame buffer */
-        if (fb_sync_write(TO BE COMPLETED)) { 
+        if (fb_sync_write(0, buf_out, NB_PIXELS*NB_LINES)) { 
             tty_printf("\n!!! echec fb_write au cycle : %d !!!\n", proctime()); 
             exit();
         }

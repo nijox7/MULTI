@@ -65,7 +65,7 @@ L'utilisation du composant PibusBlockDevice impose de changer la valeur du timeo
 Un accès à la mémoire du disque est beaucoup plus lent qu'un transfert de donnée depuis la RAM.\
 Le prix d'un accès sur le disque pouvant aller jusqu'a plusieurs millions de cycles pour un disque magnétique, on met le timeout à 10 000 000 de cycles.
 
-### C2
+### C2
 - Le segment IOC a pour adresse de base 0x92000000 et fait 32 octets.
 
 - Le segment ICU a une longueur de 32*nprocs octets.
@@ -91,10 +91,10 @@ Les IRQs provenant des périphériques sont connectés au comosant ICU à l'aide
 
 ## D - Code de boot
 
-### D1
+### D1
 Le pointeur de pile dépend du numéro de processeur car chaque processeur possède sa propre pile afin d'assurer la cohérence mémoire au sein d'un même programme.
 
-### D2
+### D2
 Afin de router les lignes d'interruptions du composant ICU vers les différents processeurs, on configure un mask pour chaque processeur permettant de filtrer les interruptions qui intéresse chaque processeur.
 
 ### D3
@@ -102,3 +102,23 @@ Afin de router les lignes d'interruptions du composant ICU vers les différents 
 - Proc 1: 0b 0000 0011 0000
 - Proc 2: 0b 0000 1100 0000
 - Proc 3: 0b 0011 0000 0000
+
+
+## E - Application logicielle de traitement d'image
+
+### E1
+Les arguments de *ioc_read()* sont:
+
+- Lba (logic block adress): Adresse du premier bloc à lire sur le disque.
+- Buffer: Adresse destination dans l'espace utilisateur.
+- Count: Nombre de blocs à lire.
+
+Cet appel système lance un transfert de lecture sur le disque pour le copier dans le buffer utilisateur.\
+Il n'attend pas que le transfert soit terminé, il met simplement la variable ioc_done à 1 lorsqu'il est terminé.\
+Cet appel système est bloquant lorsque le composant IOC n'est pas libre (ioc_lock=1).
+
+### E2
+L'appel système *ioc_completed()* ne prend pas d'arguments et attend que la variable *ioc_done* soit égale à 0.\
+Ensuite il met les variables *ioc_lock* et *ioc_done* à 0.
+
+### E3
