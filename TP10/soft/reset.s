@@ -85,13 +85,13 @@ reset:
     la    $7, seg_data_base
     la    $8, tasks_entry_point
 
-    lw    0($7)                  # seg_data[0] 
+    lw    $9, 0($7)              # seg_data[0] 
     sw    $9, 0($8)              # set task_entry_point[0]
-    lw    4($7)                  # seg_data[1]
+    lw    $9, 4($7)              # seg_data[1]
     sw    $9, 4($8)              # set task_entry_point[1]
-    lw    8($7)                  # seg_data[2]
+    lw    $9, 8($7)              # seg_data[2]
     sw    $9, 8($8)              # set task_entry_point[2]
-    lw    12($7)                 # seg_data[3]
+    lw    $9, 12($7)             # seg_data[3]
     sw    $9, 12($8)             # set task_entry_point[3]
 
     la    $9, _exit 
