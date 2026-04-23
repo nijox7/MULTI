@@ -101,7 +101,7 @@ void fifo_read(fifo_t * fifo, int * val) {
         }
         else {
             *val = fifo->buf[fifo->ptr]; // lit la donnée
-            fifo->ptw = (fifo->ptw + 1) % fifo->depth; // incrémente le pointeur de lecture
+            fifo->ptr = (fifo->ptr + 1) % fifo->depth; // incrémente le pointeur de lecture
             fifo->sts -= 1; // décremente le nombre de donnée
             lock_release((lock_t*) (&fifo->lock)); // libère le verrou
             done = 1; // transfert terminé
