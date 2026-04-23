@@ -116,4 +116,28 @@ En effet, il ne peut y avoir d'écriture concurrente sur cette variable car seul
 ### F6
 Si une tâche ne peut effectuer son transfert parce-que la FIFO est pleine, elle doit impérativement libérer le verrou sous risque de provoquer un deadlock qui empêcherait tout autre programme de prendre le verrou de la fifo dont le lecteur.
 
+### F7
+fifo_write:
+> fifo->buf[fifo->ptw] = *val;\
+            fifo->ptw = (fifo->ptw + 1) % fifo->depth;\
+            fifo->sts += 1;\
+            lock_release((lock_t *) (&fifo->lock));\
+            done = 1;
+
+fifo_read:
+>  *val = fifo->buf[fifo->ptr];\
+            fifo->ptr = (fifo->ptr + 1) % fifo->depth;\
+            fifo->sts -= 1;
+            lock_release((lock_t*) (&fifo->lock));\
+            done = 1;
+
 ### F8
+| DEPTH   | 1    | 2    | 4    | 8    |
+|:--------|:---: |:---: |:---: |:---: |
+|Producer |611016|572782|526714|562928|
+|Consumer |615322|565690|556412|586661|
+
+On peut conclure que la profondeur de la fifo a une influence sur le nombre de cycles. Si elle est trop petite, celle-ci peut faire attendre le producteur ou le consommateur.
+
+### F9
+
