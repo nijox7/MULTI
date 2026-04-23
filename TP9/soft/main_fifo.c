@@ -80,17 +80,11 @@ void fifo_write(fifo_t * fifo, int * val) {
             lock_release((lock_t *) (&fifo->lock));
         }
         else {
-            __sync_synchronize();
             fifo->buf[fifo->ptw] = *val; // écrit la valeur dans la fifo
-            __sync_synchronize();
             fifo->ptw = (fifo->ptw + 1) % fifo->depth; // incrémente le pointeur d'écriture
-            __sync_synchronize();
             fifo->sts += 1; // met à jour le nombre de données
-            __sync_synchronize();
             lock_release((lock_t *) (&fifo->lock)); // relâche le verrou
-            __sync_synchronize();
             done = 1; // le transfert est terminé
-            __sync_synchronize();
         }
     }
 }
@@ -106,18 +100,11 @@ void fifo_read(fifo_t * fifo, int * val) {
             lock_release((lock_t *) (&fifo->lock));
         }
         else {
-            __sync_synchronize();
             *val = fifo->buf[fifo->ptr]; // lit la donnée
-            __sync_synchronize();
-            if (fifo->ptr > 0) fifo->ptr -= 1; // met à jour le pointeur de lecture
-            else fifo->ptr = fifo->depth-1;
-            __sync_synchronize();
+            fifo->ptw = (fifo->ptw + 1) % fifo->depth; // incrémente le pointeur de lecture
             fifo->sts -= 1; // décremente le nombre de donnée
-            __sync_synchronize();
             lock_release((lock_t*) (&fifo->lock)); // libère le verrou
-            __sync_synchronize();
             done = 1; // transfert terminé
-            __sync_synchronize();
         }
     }
 }
