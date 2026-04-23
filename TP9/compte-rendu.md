@@ -118,18 +118,20 @@ Si une tâche ne peut effectuer son transfert parce-que la FIFO est pleine, elle
 
 ### F7
 fifo_write:
-> fifo->buf[fifo->ptw] = *val;\
-            fifo->ptw = (fifo->ptw + 1) % fifo->depth;\
-            fifo->sts += 1;\
-            lock_release((lock_t *) (&fifo->lock));\
-            done = 1;
+> 
+    fifo->buf[fifo->ptw] = *val;\
+    fifo->ptw = (fifo->ptw + 1) % fifo->depth;\
+    fifo->sts += 1;\
+    lock_release((lock_t *) (&fifo->lock));\
+    done = 1;
 
 fifo_read:
->  *val = fifo->buf[fifo->ptr];\
-            fifo->ptr = (fifo->ptr + 1) % fifo->depth;\
-            fifo->sts -= 1;
-            lock_release((lock_t*) (&fifo->lock));\
-            done = 1;
+>  
+    *val = fifo->buf[fifo->ptr];\
+    fifo->ptr = (fifo->ptr + 1) % fifo->depth;\
+    fifo->sts -= 1;
+    lock_release((lock_t*) (&fifo->lock));\
+    done = 1;
 
 ### F8
 | DEPTH   | 1    | 2    | 4    | 8    |
@@ -140,4 +142,19 @@ fifo_read:
 On peut conclure que la profondeur de la fifo a une influence sur le nombre de cycles. Si elle est trop petite, celle-ci peut faire attendre le producteur ou le consommateur.
 
 ### F9
+Pour 100 itérations:
+- Le producer se finit au bout de 262 359 cycles.
+- Le consumer se finit au bout de 262 479 cycles.
 
+On a donc un coût moyen par itération de 262 cycles pour le producer et le consumer, ce qui correspond au coût de communication.
+
+
+## G - Application logicielle multi-tâches
+
+### G1
+Pour lancer six processeurs différents, on doit modifier l'accès au main des 4 derniers processeurs:
+>   
+    # jump to main in user mode: main[2]
+    la    $26, seg_data_base\
+    lw    $26, 8($26)            # read main[2]\
+    mtc0  $26, $14               # write it in EPC register
