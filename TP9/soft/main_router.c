@@ -132,7 +132,7 @@ __attribute__ ((constructor)) void producer() {
 } // end producer()
 
 __attribute__ ((constructor)) void consumer() {
-    int array[NMAX] = {};
+    int array[NMAX];
     for (int i = 0; i < NMAX; i++) {array[i] = -1;} // initialise array
     int tempo = 0;
     int val;
@@ -141,7 +141,7 @@ __attribute__ ((constructor)) void consumer() {
 
     for (int n = 0; n < NMAX; n += 1) { 
         tempo = rand() >> 6;
-        fifo_read((fifo_t *) &fifo_Bs, &val);
+        fifo_read((fifo_t *) &fifo_B, &val);
         if (array[val] == -1) array[val] = val;
         else {
             tty_printf("already received value %d\n", val);
@@ -159,7 +159,7 @@ __attribute__ ((constructor)) void consumer() {
             val = 0;
         }   
     }
-    if (val) tty_printf("well received all tokens\n");
+    if (valid) tty_printf("well received all tokens\n");
     else tty_printf("missing some tokens\n");
 
     tty_printf("\n*** Completing consumer at cycle %d ***\n", proctime());

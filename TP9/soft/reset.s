@@ -119,7 +119,10 @@ proc2:
     # initializes SR register for PROC[2]
     li    $26, 0x0000FF13    
     mtc0  $26, $12               # SR <= 0x0000FF13
-    # jump to main in user mode: main[0]
+    # jump to main in user mode: main[2]
+    la    $26, seg_data_base
+    lw    $26, 8($26)            # read main[2]
+    mtc0  $26, $14               # write it in EPC register
     eret
 
 proc3:
