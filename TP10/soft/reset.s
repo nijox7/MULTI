@@ -193,7 +193,7 @@ ctx_loop_done:
     sw    $27, 40($26)           # _interrupt_vector[10] <= irq_dma[2]
     sw    $27, 44($26)           # _interrupt_vector[11] <= irq_dma[3]
 
-    la    $27, _isr_timer
+    la    $27, _isr_switch
     sw    $27, 48($26)           # _interrupt_vector[12] <= irq_timer[0]
     sw    $27, 52($26)           # _interrupt_vector[13] <= irq_timer[1]
     sw    $27, 56($26)           # _interrupt_vector[14] <= irq_timer[2]

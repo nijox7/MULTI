@@ -169,3 +169,19 @@ On met la période du timer à 10000 cycles (0x2710).
 
 
 ## E - Fonctionnement multi-tâches sur mono-processeur
+
+### E2
+Avec 1 processeur et 4 tâches en parallèle:\
+main_display: 27 214 139 cycles\
+Le temps n'est pas divisé par 4 car les écritures avec le DMA sont effectués en parllèle et ne dépendent donc pas de la répartition temporelle des tâches.
+
+### E3
+Avec 0x271 cycles de période, l'application main_display est beaucoup plus lente. (152 760 939 cycles, soit 6 fois plus long!)\
+Ceci est du au fait que l'application n'a pas assez de temps pour effectuer des transfert et doit probablement recommencer à cause de l'interruption.
+
+Avec 0x27100 cycles de période, l'application main_display n'est pas plus lente. (28 961 609 cycles)\
+Cependant le temps de réponse de l'application main_pgcd est beaucoup plus long!\
+Cela est du au fait que l'application a des périodes trop longues d'inactivité qui se ressentent au niveau de l'utilisateur.
+
+
+## F - Fonctionnement multi-tâches sur multi-processeurs
