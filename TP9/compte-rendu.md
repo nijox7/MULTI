@@ -164,3 +164,4 @@ Voici le résultat de la simulation:
 !["SimulationG.png"](SimulationG.png)
 
 ### G2
+On préfère utiliser un verrou indépendant pour chaque canaux afin de paralléliser au maximum la communication. Si on avait un verrou pour tous les canaux, alors si un producer ou consumer interagit avec un canal, il bloquerait l'accès à tous les autres cannaux en même temps.
