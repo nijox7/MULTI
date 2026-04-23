@@ -85,13 +85,13 @@ reset:
     la    $7, seg_data_base
     la    $8, tasks_entry_point
 
-    lw    TO BE COMPLETED        # seg_data[0] 
+    lw    0($7)                  # seg_data[0] 
     sw    $9, 0($8)              # set task_entry_point[0]
-    lw    TO BE COMPLETED        # seg_data[1]
+    lw    4($7)                  # seg_data[1]
     sw    $9, 4($8)              # set task_entry_point[1]
-    lw    TO BE COMPLETED        # seg_data[2]
+    lw    8($7)                  # seg_data[2]
     sw    $9, 8($8)              # set task_entry_point[2]
-    lw    TO BE COMPLETED        # seg_data[3]
+    lw    12($7)                 # seg_data[3]
     sw    $9, 12($8)             # set task_entry_point[3]
 
     la    $9, _exit 
@@ -125,7 +125,7 @@ reset:
     # we must define the actual number of tasks assigned to each processor
     # this must be consistent with the task_entry_point array above.
     la    $8, _task_number_array
-    li    $9, TO BE COMPLETED
+    li    $9, 4
     sb    $9, 0($8)              # set_ task_number_array[0]
     li    $9, 0
     sb    $9, 1($8)              # set _task_number_array[1]
@@ -187,13 +187,13 @@ ctx_loop_done:
     la    $27, _isr_ioc 
     sw    $27, 0($26)            # _interrupt_vector[0]  <= irq_ioc
 
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_dma
     sw    $27, 32($26)           # _interrupt_vector[8]  <= irq_dma[0]
     sw    $27, 36($26)           # _interrupt_vector[9]  <= irq_dma[1]
     sw    $27, 40($26)           # _interrupt_vector[10] <= irq_dma[2]
     sw    $27, 44($26)           # _interrupt_vector[11] <= irq_dma[3]
 
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_timer
     sw    $27, 48($26)           # _interrupt_vector[12] <= irq_timer[0]
     sw    $27, 52($26)           # _interrupt_vector[13] <= irq_timer[1]
     sw    $27, 56($26)           # _interrupt_vector[14] <= irq_timer[2]
@@ -207,29 +207,29 @@ ctx_loop_done:
     sw    $27, 72($26)           # _interrupt_vector[18] <= irq_tty[0,2]
     la    $27, _isr_tty_get_task3
     sw    $27, 76($26)           # _interrupt_vector[19] <= irq_tty[0,3]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task0
     sw    $27, 80($26)           # _interrupt_vector[20] <= irq_tty[1,0]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task1
     sw    $27, 84($26)           # _interrupt_vector[21] <= irq_tty[1,1]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task2
     sw    $27, 88($26)           # _interrupt_vector[22] <= irq_tty[1,2]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task3
     sw    $27, 92($26)           # _interrupt_vector[23] <= irq_tty[1,3]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task0
     sw    $27, 96($26)           # _interrupt_vector[24] <= irq_tty[2,0]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task1
     sw    $27, 100($26)          # _interrupt_vector[25] <= irq_tty[2,1]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task2
     sw    $27, 104($26)          # _interrupt_vector[26] <= irq_tty[2,2]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task3
     sw    $27, 108($26)          # _interrupt_vector[27] <= irq_tty[2,3]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task0
     sw    $27, 112($26)          # _interrupt_vector[28] <= irq_tty[3,0]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task1
     sw    $27, 116($26)          # _interrupt_vector[29] <= irq_tty[3,1]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task2
     sw    $27, 120($26)          # _interrupt_vector[30] <= irq_tty[3,2]
-    la    $27, TO BE COMPLETED
+    la    $27, _isr_tty_get_task3
     sw    $27, 124($26)          # _interrupt_vector[31] <= irq_tty[3,3]
 
     # initializes ICU_MASK[pid] using the values defined in icu_mask_array[]
@@ -246,7 +246,7 @@ ctx_loop_done:
     sll   $17, $10, 4            # $17 <= pid*16
     la    $16, seg_timer_base
     addu  $16, $16, $17          # $16 <= seg_timer_base + 16*pid
-    li    TO BE COMPLETED
+    li    $17, 0x400
     sw    $17, 8($16)            # period <= 10000
     li    $17, 1
     sw    $17, 4($16)            # TIMER[pid] start

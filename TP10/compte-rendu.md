@@ -150,3 +150,22 @@ Proc 3: 0b 1111 0000 0000 0000 1000 1000 0000 0000
     .word 0b11110000000000001000100000000000    # ICU_MASK[3]
 
 ### D4
+On doit définir 4 ISR différentes pour le composant TTY si on veut exécuter 4 tâches par processeurs car si on intéragit avec par exemple avec la première tâche, on ne veut pas que la deuxième tâche réagisse mais seulement la première. Il faut donc pour celà définir des routines séparées.
+<!-- TODO pas sur?? -->
+
+### D5
+Pour initialiser le vecteur d'interruptions, on renseigne les adresses de _isr_timer, _isr_dma, _isr_ioc et , _isr_ty_get0,1,2,3 en fonction du numéro de tâche.
+
+### D6
+Le segment SEG_STACK a une longueur de 0x00100000 = 2^20 = 1 000 000 octets soit 1 méga octet.\
+Avec 16 tâches, il faut donc 16 * 64K = 2^20 = 1 000 000.\
+La taille de la pile est donc strictement suffisante.
+
+Il faut initialiser le pointeur de piles de chacune des tâches T(n, k) à 64K * (4*n + k + 1).
+
+### D7
+Si les tâches pouvaient modifier la périodicité des changement de contexte directement, elles pourraient se bloquer les unes entre les autres.\
+On met la période du timer à 1000 cycles (0x400).
+
+
+## E - Fonctionnement multi-tâches sur mono-processeur
