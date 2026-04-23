@@ -246,7 +246,7 @@ ctx_loop_done:
     sll   $17, $10, 4            # $17 <= pid*16
     la    $16, seg_timer_base
     addu  $16, $16, $17          # $16 <= seg_timer_base + 16*pid
-    li    $17, 0x400
+    li    $17, 0x2710
     sw    $17, 8($16)            # period <= 10000
     li    $17, 1
     sw    $17, 4($16)            # TIMER[pid] start

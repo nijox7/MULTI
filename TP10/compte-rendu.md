@@ -165,7 +165,7 @@ Il faut initialiser le pointeur de piles de chacune des tâches T(n, k) à 64K *
 
 ### D7
 Si les tâches pouvaient modifier la périodicité des changement de contexte directement, elles pourraient se bloquer les unes entre les autres.\
-On met la période du timer à 1000 cycles (0x400).
+On met la période du timer à 10000 cycles (0x2710).
 
 
 ## E - Fonctionnement multi-tâches sur mono-processeur
