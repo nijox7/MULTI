@@ -158,3 +158,9 @@ Pour lancer six processeurs différents, on doit modifier l'accès au main des 4
     la    $26, seg_data_base\
     lw    $26, 8($26)            # read main[2]\
     mtc0  $26, $14               # write it in EPC register
+
+Voici le résultat de la simulation:
+
+!["SimulationG.png"](SimulationG.png)
+
+### G2

@@ -120,9 +120,9 @@ __attribute__ ((constructor)) void producer() {
         tempo = rand() >> 6;
         val = n;
         fifo_write((fifo_t *) &fifo_A, &val);
-        // for (int x = 0; x < tempo; x += 1) {
-        //     asm volatile("");
-        // }
+        for (int x = 0; x < tempo; x += 1) {
+            asm volatile("");
+        }
         tty_printf("transmitted value : %d      temporisation = %d\n", val, tempo);
     }
 
@@ -146,9 +146,9 @@ __attribute__ ((constructor)) void consumer() {
         else {
             tty_printf("already received value %d\n", val);
         }
-        // for (int x = 0; x < tempo; x += 1) {
-        //     asm volatile("");
-        // }
+        for (int x = 0; x < tempo; x += 1) {
+            asm volatile("");
+        }
         tty_printf("received value : %d      temporisation = %d\n", val, tempo);
     }
 
