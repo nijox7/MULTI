@@ -1,5 +1,5 @@
 # Compte-rendu TP7
-
+<!-- 
 ## Notes
 
 DMA -> coprocesseur donc pas d'accès mémoire pour communiquer entre DMA et Processeur?\
@@ -11,7 +11,7 @@ DMA -> coprocesseur donc pas d'accès mémoire pour communiquer entre DMA et Pro
 Processeur -> écrit dans registres du DMA les paramètres (source, dest, size)
 
 coprocesseur = travaille en parallèle
-
+-->
 ## B - Contrôleur DMA
 
 ### B1

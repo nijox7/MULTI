@@ -1,12 +1,12 @@
 # Compte-rendu TP10
-
+<!--
 ## Notes
 
 TTY     -> 16 (1/tache)
 DMA     -> 4  (1 CANAL / processeur)
 TIMER   -> 4  (1 ? /processeur)
 IOC     -> 1  (1 pour tous)
-
+-->
 
 ## B - Architecture matérielle
 
@@ -184,4 +184,4 @@ Cependant le temps de réponse de l'application main_pgcd est beaucoup plus long
 Cela est du au fait que l'application a des périodes trop longues d'inactivité qui se ressentent au niveau de l'utilisateur.
 
 
-## F - Fonctionnement multi-tâches sur multi-processeurs
+<!--## F - Fonctionnement multi-tâches sur multi-processeurs -->

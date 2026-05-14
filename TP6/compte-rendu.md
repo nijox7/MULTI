@@ -1,5 +1,5 @@
 # Compte-rendu TP6
-
+<!--
 ## Notes personelles
 
 
@@ -55,7 +55,7 @@ _isr_tty_get  -> valeur saisie au clavier
 >char c = _tty_read_irq();\
 _tty_get_buf[i] = c;\
 _tty_get_full = 0;
-
+-->
 
 ## C - Composants périphériques
 
@@ -193,10 +193,12 @@ On identifie la première occurence de "*sel_tim* = 1".
 - Le processeur 0 reçoit la première interruption du TIMER[0] au cycle 50067.\
 On identifie la première occurence de "*tim_irq[0]* = 1".
 
-### E8
+<!--
+### E8 -->
 <!-- TODO MAISON -->
 
-### E9
+<!--
+### E9 -->
 <!-- TODO MAISON -->
 
 
@@ -267,12 +269,13 @@ sw     $29,    20($27)       # _vector_interrupt[5] = _isr_tty_get
 
 ### F8
 Pour connaître la position des composants dans le mask, on regarde la description du fichier *tp5_top.cpp* qui dit à quelle entrée IRQ_IN un comoposant est relié.\
-On voit que TTY est relié à l'entrée 3 de l'ICU.\
-
+On voit que TTY est relié à l'entrée 3 de l'ICU.
+<!--
 (proc0)
 >
 
 (proc1)
 >
+-->
 
 <!-- TODO les masks sont communs ??? BAH OUI SUREMENT CHACUN A LE SIEN MAIS LES NUMEROS SONT LES MEMES !!-->

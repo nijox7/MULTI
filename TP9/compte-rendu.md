@@ -1,7 +1,5 @@
 # Compte-rendu TP9
 
-## Notes
-
 ## C - Application producteur / consommateur
 
 ### C1

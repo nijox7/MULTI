@@ -1,5 +1,6 @@
 # Compte-rendu TP8
 
+<!--
 ## Notes
 images.raw:
 21 * 128*128 * 256 = 21 * (2^7)*(2^7) * (2^8)
@@ -7,7 +8,7 @@ images.raw:
         (environ)  = 21 * 4 000 000 = 84 000 000
 
 Disque -> tête de lecture -> ralentit les accès
-
+-->
 ## B - Contrôleur de disque
 
 ### B1
